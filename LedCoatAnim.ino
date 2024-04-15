@@ -50,7 +50,7 @@ LedInfo ledMappingVertical[72] = {
     {1, 15, 384, 479, true}, 
     {1, 16, 399, 494, false}, 
     {1, 17, 415, 510, true}, 
-    {1, 19, 432, 527, false}, // END 451
+    {1, 19, 432, 527, false}, // END 1 to 451
 
     {2, 33, 95, 546, true}, 
     {3, 33, 0, 579, true}, 
