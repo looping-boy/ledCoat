@@ -131,7 +131,7 @@ void loop() {
   //diagonalRainbowCycle(1);
   //breathing();
   //printNiantCat();
-  printLooping();
+  printLooping2();
 }
 
 void breathing() {
@@ -241,6 +241,24 @@ void printLooping() {
     Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
     //delay(1000);
 }
+
+void printLooping2() {
+    time1=ESP.getCycleCount();
+    uint8_t height = 37;
+    uint8_t width = 72;
+    uint8_t gifHeight = 34;
+    uint8_t offset = (height-gifHeight) * 72;
+    
+    for(uint16_t i = 0; i < 2448; i++) {
+      if (ledMapping[i].pwmChannel != 7) {
+        leds[ledMapping[i].pwmChannel][ledMapping[i].indexInPwm] = CRGB(looping[i]);
+      }
+    }
+    FastLED.show();
+    time3=ESP.getCycleCount();
+    Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
+}
+
 
 
 uint32_t Wheel(byte WheelPos) {
