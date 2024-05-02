@@ -131,7 +131,8 @@ void loop() {
   //diagonalRainbowCycle(1);
   //breathing();
   //printNiantCat();
-  printLooping2();
+  circleRainbowCycle(1);
+  //printLooping2();
 }
 
 void breathing() {
@@ -163,6 +164,18 @@ void diagonalRainbowCycle(uint8_t wait) {
     for (int i = 0; i < 72; i++) {
         for (int k = 0; k < 140; k++) {
             leds[ledMappingDiagonal[i][k].pwmChannel][ledMappingDiagonal[i][k].indexInPwm] = CRGB(Wheel((((i) * 256 / 72) + j) & 255));
+        }
+    }
+    FastLED.show();
+    delay(wait);
+  }
+}
+
+void circleRainbowCycle(uint8_t wait) {
+  for(uint16_t j=0; j<256; j++) {
+    for (int i = 0; i < 40; i++) {
+        for (int k = 0; k < 200; k++) {
+            leds[ledMappingCylinder[i][k].pwmChannel][ledMappingCylinder[i][k].indexInPwm] = CRGB(Wheel((((i) * 256 / 72) + j) & 255));
         }
     }
     FastLED.show();
