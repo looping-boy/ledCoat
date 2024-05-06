@@ -11,11 +11,12 @@
 
 #define NUM_STRIPS 4
 #define SIZE_ANIM 1856
-#define BRIGHTNESS 20
+#define BRIGHTNESS 255
 
 CRGB leds[NUM_STRIPS][500];
 #include "I2SClocklessVirtualLedDriver.h"
 #include "GifAnimations.h"
+#include "ConvertedGifs.h"
 #include "Squeletons.h"
 
 typedef struct {
@@ -127,24 +128,86 @@ long time1,time2,time3;
 void loop() {
   FastLED.setBrightness(BRIGHTNESS);
   //rainbowCycle(1);
+  horizontalLignRainbowCycle(1);
+  upLign(1);
   //verticalRainbowCycle(1);
-  //diagonalRainbowCycle(1);
-  //breathing();
+  
+  breathing();
   //printNiantCat();
-  //circleRainbowCycle(1);
+  circleRainbowCycle(5);
   //printLooping2();
-  displayGif(1);
+  // displayGif(1);
+  // animateGif();
+  // batteryLevel();
+  psyAnim();
+  pongAnim();
+  spiralAnim();
+  //diagonalRainbowCycle(1);
+  warningAnim();
+  warningAnim();
+  //checkBlueAnim();
+  blink();
+  explosion(5);
+  circleRainbowCycle(5);
+}
+
+void explosion(uint8_t loop) {
+  for(uint8_t l=0; l < loop; l++) {
+
+    //for(uint16_t j=0; j < 256; j++) {
+      for (int i = 0; i < 40; i+=2) {
+        for (int j = 0; j < 2; j++) {
+          for (int k = 0; k < 200; k++) {
+            leds[ledMappingCylinder[i + j][k].pwmChannel][ledMappingCylinder[i + j][k].indexInPwm] = CRGB(Wheel((((i) * 256 / 72) + l*(256/loop)) & 255));
+          }
+        }
+        FastLED.show();
+        float logValue = log(i+1);
+        int roundedLog = round(logValue) * 4;
+        //int delayTime = roundedLog * 100;
+        delay(roundedLog);
+        //delay(i);
+      }
+
+      for (int i = 0; i < 40; i += 4) {
+        for (int j = 0; j < 4; j++) {
+          for (int k = 0; k < 200; k++) {
+            leds[ledMappingCylinder[i + j][k].pwmChannel][ledMappingCylinder[i + j][k].indexInPwm] = CRGB(0x00000000);
+          }
+        }
+        FastLED.show();
+      }
+  }
+}
+
+void blink() {
+  for(uint16_t j=0; j<20; j++) {
+    if (j % 2 == 0) {
+      for(uint16_t i=0; i<477; i++) {
+        for (int l = 3; l >= 0; l--) {
+          leds[l][i] = CRGB(Wheel(((5 * 256 / SIZE_ANIM) + j*(256/20)) & 255));
+        }
+      }
+    } else {
+      for(uint16_t i=0; i<477; i++) {
+        for (int l = 3; l >= 0; l--) {
+          leds[l][i] = CRGB(0x00000000);
+        }
+      }
+    }
+    FastLED.show();
+    delay(100);
+  }
 }
 
 void breathing() {
   for(uint16_t j=0; j<256; j++) {
-    for(uint16_t i=300; i<400; i++) {
+    for(uint16_t i=0; i<477; i++) {
       for (int l = 3; l >= 0; l--) {
         leds[l][i] = CRGB(Wheel(((5 * 256 / SIZE_ANIM) + j) & 255));
       }
     }
     FastLED.show();
-    //delay(1);
   }
 }
 
@@ -154,6 +217,43 @@ void verticalRainbowCycle(uint8_t wait) {
         for (int k = 0; k < 72; k++) {
             leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(Wheel((((i) * 256 / 72) + j) & 255));
         }
+    }
+    FastLED.show();
+    delay(wait);
+  }
+}
+
+void horizontalLignRainbowCycle(uint8_t wait) {
+  for(uint16_t j=0; j<37; j++) {
+    for (int i = 0; i < 72; i++) {
+      if (j == i) {
+        for (int k = 0; k < 72; k++) {
+            leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(Wheel((((i) * 256 / 72) + j*(256/37)) & 255));
+        }
+      } else {
+        for (int k = 0; k < 72; k++) {
+            leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(0x00000000);
+        }
+      }
+        
+    }
+    FastLED.show();
+    delay(wait);
+  }
+}
+
+void upLign(uint8_t wait) {
+  for(uint16_t j = 37; j>0; j--) {
+    for (int i = 0; i < 72; i++) {
+      if (j == i) {
+        for (int k = 0; k < 72; k++) {
+            leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(Wheel((( 256 - i * 256 / 72) + (256 - j*(256/37))) & 255));
+        }
+      } else {
+        for (int k = 0; k < 72; k++) {
+            leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(0x00000000);
+        }
+      }
     }
     FastLED.show();
     delay(wait);
@@ -172,15 +272,17 @@ void diagonalRainbowCycle(uint8_t wait) {
   }
 }
 
-void circleRainbowCycle(uint8_t wait) {
-  for(uint16_t j=0; j<256; j++) {
-    for (int i = 0; i < 40; i++) {
+void circleRainbowCycle(uint8_t loop) {
+  for(uint8_t l=0; l < loop; l++) {
+    for(uint16_t j=0; j < 256; j++) {
+      for (int i = 0; i < 40; i++) {
         for (int k = 0; k < 200; k++) {
             leds[ledMappingCylinder[i][k].pwmChannel][ledMappingCylinder[i][k].indexInPwm] = CRGB(Wheel((((i) * 256 / 72) + j) & 255));
         }
+      }
+      FastLED.show();
+      delay(1);
     }
-    FastLED.show();
-    delay(wait);
   }
 }
 
@@ -274,23 +376,134 @@ void printLooping2() {
 }
 
 void displayGif(uint8_t wait) {
-    time1=ESP.getCycleCount();
+    
     uint8_t height = 37;
     uint8_t width = 72;
     uint8_t gifHeight = 34;
     uint8_t offset = (height-gifHeight) * 72;
     
-    for (uint16_t f = 0; f < 7; f++) {
+    for (uint16_t f = 0; f < 14; f++) {
+      time1=ESP.getCycleCount();
       for(uint16_t i = 0; i < 2448; i++) {
         if (ledMapping[i].pwmChannel != 7) {
           leds[ledMapping[i].pwmChannel][ledMapping[i].indexInPwm] = CRGB(looping2[f][i]);
         }
       }
-      delay(300);
       FastLED.show();
+      delay(75);
+      time3=ESP.getCycleCount();
+      Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
     }
-    time3=ESP.getCycleCount();
-    Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
+    
+    
+}
+
+void animateGif() {
+  // int total = sizeof(movingRainbow);
+  // uint16_t frameSize = sizeof(movingRainbow[0]);
+  // uint8_t numberOfFrame = total / frameSize;
+    for (uint16_t f = 0; f < 20; f++) {
+      time1=ESP.getCycleCount();
+      for(uint16_t i = 0; i < 2664; i++) {
+        if (ledMapping[i].pwmChannel != 7) {
+          leds[ledMapping[i].pwmChannel][ledMapping[i].indexInPwm] = CRGB(movingRainbow[f][i]);
+        }
+      }
+      FastLED.show();
+      delay(25);
+      time3=ESP.getCycleCount();
+      Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
+    }       
+}
+
+void batteryLevel() {
+    for (uint16_t f = 0; f < 12; f++) {
+      time1=ESP.getCycleCount();
+      for(uint16_t i = 0; i < 2664; i++) {
+        if (ledMapping[i].pwmChannel != 7) {
+          leds[ledMapping[i].pwmChannel][ledMapping[i].indexInPwm] = CRGB(lowBatteryLevel[f][i]);
+        }
+      }
+      FastLED.show();
+      delay(300);
+      time3=ESP.getCycleCount();
+      Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
+    }       
+}
+
+void psyAnim() {
+    for (uint16_t f = 0; f < 20; f++) {
+      time1=ESP.getCycleCount();
+      for(uint16_t i = 0; i < 2664; i++) {
+        if (ledMapping[i].pwmChannel != 7) {
+          leds[ledMapping[i].pwmChannel][ledMapping[i].indexInPwm] = CRGB(psy[f][i]);
+        }
+      }
+      FastLED.show();
+      delay(25);
+      time3=ESP.getCycleCount();
+      Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
+    }       
+}
+
+void pongAnim() {
+    for (uint16_t f = 0; f < 19; f++) {
+      time1=ESP.getCycleCount();
+      for(uint16_t i = 0; i < 2664; i++) {
+        if (ledMapping[i].pwmChannel != 7) {
+          leds[ledMapping[i].pwmChannel][ledMapping[i].indexInPwm] = CRGB(pong[f][i]);
+        }
+      }
+      FastLED.show();
+      delay(25);
+      time3=ESP.getCycleCount();
+      Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
+    }       
+}
+
+void spiralAnim() {
+    for (uint16_t f = 0; f < 15; f++) {
+      time1=ESP.getCycleCount();
+      for(uint16_t i = 0; i < 2664; i++) {
+        if (ledMapping[i].pwmChannel != 7) {
+          leds[ledMapping[i].pwmChannel][ledMapping[i].indexInPwm] = CRGB(spiral[f][i]);
+        }
+      }
+      FastLED.show();
+      delay(25);
+      time3=ESP.getCycleCount();
+      Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
+    }       
+}
+
+void warningAnim() {
+    for (uint16_t f = 0; f < 7; f++) {
+      time1=ESP.getCycleCount();
+      for(uint16_t i = 0; i < 2664; i++) {
+        if (ledMapping[i].pwmChannel != 7) {
+          leds[ledMapping[i].pwmChannel][ledMapping[i].indexInPwm] = CRGB(warning[f][i]);
+        }
+      }
+      FastLED.show();
+      delay(25);
+      time3=ESP.getCycleCount();
+      Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
+    }       
+}
+
+void checkBlueAnim() {
+    for (uint16_t f = 0; f < 40; f++) {
+      time1=ESP.getCycleCount();
+      for(uint16_t i = 0; i < 2664; i++) {
+        if (ledMapping[i].pwmChannel != 7) {
+          leds[ledMapping[i].pwmChannel][ledMapping[i].indexInPwm] = CRGB(checkBlue[f][i]);
+        }
+      }
+      FastLED.show();
+      delay(25);
+      time3=ESP.getCycleCount();
+      Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
+    }       
 }
 
 
