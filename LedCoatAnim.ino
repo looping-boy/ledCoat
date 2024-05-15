@@ -128,7 +128,7 @@ long time1,time2,time3;
 void loop() {
   FastLED.setBrightness(BRIGHTNESS);
   //rainbowCycle(1);
-  horizontalLignRainbowCycle(1);
+  //horizontalLignRainbowCycle(1);
   upLign(1);
   //verticalRainbowCycle(1);
   
@@ -139,7 +139,7 @@ void loop() {
   // displayGif(1);
   // animateGif();
   // batteryLevel();
-  psyAnim();
+  //psyAnim();
   pongAnim();
   spiralAnim();
   //diagonalRainbowCycle(1);
