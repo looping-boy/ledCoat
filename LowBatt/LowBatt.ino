@@ -8,9 +8,9 @@
   The middle (connection between two resistors) goes to Arduino A0
 */
 
-const int ledPinRed = 33;
-const int ledPinYellow = 27;
-const int ledPinGreen = 13;
+const int ledPinRed = 9;
+const int ledPinYellow = 8;
+const int ledPinGreen = 7;
 
 
 void setup()
@@ -23,7 +23,7 @@ void setup()
 
 void loop()
 {
-  Serial.printf("Test \n");
+  Serial.println("Test \n");
   printVolts();
 }
  
@@ -33,9 +33,12 @@ void loop()
   digitalWrite (ledPinYellow, LOW);
   digitalWrite (ledPinGreen, LOW);
 
-  int sensorValue = analogRead(34); //read the A0 pin value
+  int sensorValue = analogRead(A1); //read the A0 pin value
   float voltage = sensorValue * 2; //convert the value to a true voltage.
-  Serial.printf("Voltage %.2f \n",(float) voltage);
+  printVolts(voltage);
+  // Serial.printf("Voltage ");
+  // Serial.printf(voltage, 2); // 2 specifies the number of decimal places
+  // Serial.printf(" V");
   if (voltage >= 4200) {
     digitalWrite (ledPinGreen, HIGH);
   } else if (voltage >= 3700) {
@@ -45,4 +48,8 @@ void loop()
   }
 
   delay(100);
+}
+
+void printVolts(float voltage) {
+    Serial.printf("Voltage %.2f V\n", voltage);
 }

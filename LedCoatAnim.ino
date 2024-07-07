@@ -121,6 +121,8 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, 4>(leds[2], 477);
   FastLED.addLeds<NEOPIXEL, 5>(leds[3], 477);
   FastLED.addLeds<NEOPIXEL, 23>(leds[0], 451);
+  pinMode(18, OUTPUT);
+
   // FastLED.addLeds<NEOPIXEL, 21>(leds[4], 70);
 }
 
@@ -129,26 +131,40 @@ void loop() {
   FastLED.setBrightness(BRIGHTNESS);
   //rainbowCycle(1);
   //horizontalLignRainbowCycle(1);
-  upLign(1);
+  // upLign(1);
   //verticalRainbowCycle(1);
   
-  breathing();
+  // breathing();
+  breathingSmall();
   //printNiantCat();
-  circleRainbowCycle(5);
+  // circleRainbowCycle(5);
   //printLooping2();
   // displayGif(1);
   // animateGif();
   // batteryLevel();
   //psyAnim();
-  pongAnim();
-  spiralAnim();
+  // pongAnim();
+  // spiralAnim();
   //diagonalRainbowCycle(1);
-  warningAnim();
-  warningAnim();
+  // warningAnim();
+  // warningAnim();
   //checkBlueAnim();
-  blink();
-  explosion(5);
-  circleRainbowCycle(5);
+  // blink();
+  // explosion(5);
+  // circleRainbowCycle(5);
+}
+
+void breathingSmall() {
+  for(uint16_t j=0; j<256; j++) {
+    for(uint16_t i=0; i<288; i++) {
+        leds[1][i] = CRGB(Wheel(((5 * 256 / 288) + j) & 255));
+    }
+    FastLED.show();
+  }
+  tone(18, 500); // Send 1KHz sound signal...
+  delay(500);        // ...for 1 sec
+  noTone(18);     // Stop sound...
+  delay(500); 
 }
 
 void explosion(uint8_t loop) {
