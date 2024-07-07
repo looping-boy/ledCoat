@@ -54,6 +54,7 @@ void drawColorBar() {
 int findSelectedColorInColorBar(int position) {
   int r, g, b;
   
+  // Position goes to 280 max and min 0
   // Normalize position to range [0, 1]
   float normalizedPosition = (float)position / (COLOR_BAR_WIDTH - 1);
 
@@ -93,46 +94,67 @@ void drawCursor(int x) {
 }
 
 void drawSelectedColor(int position) {
-  // sprite.drawRoundRect(20, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10, 40, 40, 8, TFT_WHITE);
-  // sprite.fillRoundRect(20 + 2, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10 + 2, 36, 36, 8, findSelectedColorInColorBar(position));
-}
-
-void drawSelectedColor2(int position) {
   sprite.drawRoundRect(20, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10, 40, 40, 8, TFT_WHITE);
   sprite.fillRoundRect(20 + 2, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10 + 2, 36, 36, 8, findSelectedColorInColorBar(position));
 }
 
 uint16_t interpolateColor(uint16_t color1, uint16_t color2, float t) {
-    uint8_t r2 = (color2 >> 11) & 0xF8;
-    uint8_t g2 = (color2 >> 5) & 0xFC;
-    uint8_t b2 = color2 & 0xF8;
+    // Extract RGB components from RGB565
+    uint8_t r1 = (color1 >> 11) & 0x1F;
+    uint8_t g1 = (color1 >> 5) & 0x3F;
+    uint8_t b1 = color1 & 0x1F;
 
-    uint8_t r = t * r2;
-    uint8_t g = t * g2;
-    uint8_t b = t * b2;
+    uint8_t r2 = (color2 >> 11) & 0x1F;
+    uint8_t g2 = (color2 >> 5) & 0x3F;
+    uint8_t b2 = color2 & 0x1F;
 
+    // Interpolate each channel in full range
+    uint8_t r = r1 + t * (r2 - r1);
+    uint8_t g = g1 + t * (g2 - g1);
+    uint8_t b = b1 + t * (b2 - b1);
+
+    // Repack interpolated RGB into RGB565 format
     return (r << 11) | (g << 5) | b;
 }
 
 // Function to draw the selected color with breathing effect
-void drawBreathingColor(int position, uint32_t currentTime) {
+void drawBreathingColorAnim(int position, uint32_t currentTime) {
     uint16_t selectedColor = findSelectedColorInColorBar(position);
     uint16_t blackColor = TFT_BLACK; // assuming TFT_BLACK is defined
 
     // Calculate the time factor (0.0 to 1.0) based on the elapsed time
-    float elapsed = (currentTime % 1000) / 1000.0;
-    float cycleTime = 4.0; // 1 second
+    float cycleTime = 1500; // 2 seconds for a full cycle
+    float elapsed = (currentTime % (uint32_t)cycleTime) / cycleTime;
 
-    // Calculate t for interpolation
-    float t = (sin(elapsed * 2 * 3.14159265359 / cycleTime) + 1) / 2;
+    // Calculate t for interpolation using sine wave
+    float t = (sin(elapsed * 2 * 3.14159265359) + 1) / 2;
 
     // Interpolate between black and selected color
     uint16_t interpolatedColor = interpolateColor(blackColor, selectedColor, t);
 
-    // // Draw the rounded rectangle with the interpolated color
-    sprite.drawRoundRect(20, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10, 40, 40, 8, TFT_WHITE);
-    sprite.fillRoundRect(20 + 2, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10 + 2, 36, 36, 8, interpolatedColor);
+    // Draw the rounded rectangle with the interpolated color
+    sprite.drawRoundRect(20 + 40 + 10, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10, 40, 40, 8, TFT_WHITE);
+    sprite.fillRoundRect(20 + 40 + 10 + 2, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10 + 2, 36, 36, 8, interpolatedColor);
     sprite.pushSprite(0, 0);
 }
+
+// Function to draw the selected color with breathing effect
+void drawMultiColorAnim(int position, uint32_t currentTime) {
+    float cycleTime = 3.0; // 20 seconds for a full cycle
+    float elapsed = (currentTime % (uint32_t)(cycleTime * 1000)) / (cycleTime * 1000.0);
+
+    // Map elapsed to a position in the color bar
+    float t = elapsed * (COLOR_BAR_WIDTH - 1); // COLOR_BAR_WIDTH - 1 for full color range
+
+    // Find the interpolated color
+    uint16_t interpolatedColor = findSelectedColorInColorBar((int)t);
+
+    // Draw the rounded rectangle with the interpolated color
+    sprite.drawRoundRect(20 + 40 + 10 + 40 + 10, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10, 40, 40, 8, TFT_WHITE);
+    sprite.fillRoundRect(20 + 40 + 10 + 40 + 10 + 2, STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT + 10 + 2, 36, 36, 8, interpolatedColor);
+    sprite.pushSprite(0, 0);
+}
+
+
 
 #endif // COLOR_TAB_H

@@ -106,7 +106,8 @@ void draw() {
 }
 
 void drawButton(int x, int y, const char* label, int buttonId) {
-  int buttonColor = (buttonId == activeButton) ? TFT_GREEN : TFT_BLACK;
+  int buttonColor = (buttonId == activeButton) ? TFT_WHITE : TFT_BLACK;
+  int textColor = (buttonId == activeButton) ? TFT_BLACK : TFT_WHITE;
   int borderColor = TFT_WHITE;  // Color of the border/stroke
 
   // Draw the button background with rounded corners
@@ -116,7 +117,7 @@ void drawButton(int x, int y, const char* label, int buttonId) {
   sprite.drawRoundRect(x, y, BUTTON_SIZE, BUTTON_SIZE, 8, borderColor);  // 8 is the radius for rounded corners
 
   // Set text color and size
-  sprite.setTextColor(TFT_WHITE, buttonColor);
+  sprite.setTextColor(textColor, buttonColor);
   sprite.setTextSize(1);  // Smaller text size
 
   // Draw the button label (text)
@@ -230,10 +231,12 @@ unsigned long touchStartTime = 0;
 
 void loop() {
 
+  // ANIMATIONS ON THE PAGES :
   if (activeButton == 3) {
     uint32_t currentTime = millis(); // get the current time in milliseconds
-    drawBreathingColor(cursorPosition, currentTime);
-    delay(16); // approximately 60 frames per second
+    drawBreathingColorAnim(cursorPosition, currentTime);
+    drawMultiColorAnim(cursorPosition, currentTime);
+    //delay(16); // approximately 60 frames per second
   }
 
   unsigned long currentTime = millis();
