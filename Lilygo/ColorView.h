@@ -1,6 +1,5 @@
-// ColorTab.h
-#ifndef COLOR_TAB_H
-#define COLOR_TAB_H
+#ifndef COLOR_VIEW_H
+#define COLOR_VIEW_H
 
 const int COLOR_BAR_WIDTH = 280;  // Width of the color bar
 const int COLOR_BAR_HEIGHT = 40;  // Height of the color bar  
@@ -10,6 +9,7 @@ void drawSelectedColor(int position);
 void drawCursor(int x);
 
 void drawColorPickerView(int cursorPosition) {
+  sprite.fillRect(20, 50, COLOR_BAR_WIDTH , COLOR_BAR_HEIGHT, TFT_BLACK); // Top and left
   drawColorBar();
   drawCursor(cursorPosition);
   drawSelectedColor(cursorPosition);
@@ -156,5 +156,4 @@ void drawMultiColorAnim(int position, uint32_t currentTime) {
 }
 
 
-
-#endif // COLOR_TAB_H
+#endif // COLOR_VIEW_H
