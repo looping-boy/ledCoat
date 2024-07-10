@@ -1,7 +1,6 @@
 #ifndef TABS_H
 #define TABS_H
 
-const int BUTTON_SIZE = 40;
 const int BUTTON_MARGIN = 5;
 const int BUTTON_COLOR_INACTIVE = TFT_WHITE;
 const int BUTTON_COLOR_ACTIVE = TFT_GREEN;

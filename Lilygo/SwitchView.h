@@ -2,6 +2,7 @@
 #define SWITCH_VIEW_H
 
 void redrawView1();
+void drawSwitchesView();
 
 void drawSwitchesView() {
   // UP

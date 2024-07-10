@@ -15,16 +15,9 @@ unsigned long lastTouchTime = 0;
 const unsigned long screenTimeout = 1000000;
 bool screenOn = true;
 
-// Variables for touch handling
-bool touchActive = false;
-int cursorPosition = 150;  // Position of the cursor on the bar
-
 // Variables to handle scrolling and momentum
 unsigned long lastUpdateTime = 0;
 unsigned long touchStartTime = 0;
-
-// State value
-int colorSelected = findSelectedColorInColorBar(cursorPosition);
 
 void setup() {
   pinMode(PIN_POWER_ON, OUTPUT);
@@ -36,8 +29,9 @@ void setup() {
   tft.begin();
   tft.setRotation(1);
   sprite.createSprite(320, 170);
-  sprite.setTextColor(TFT_WHITE, TFT_BLACK);
+  sprite.setTextColor(TFT_WHITE);
   Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
+  colorSelected = findSelectedColorInColorBar(cursorPosition);
   draw(activeButton);
   pinMode(PIN_LCD_BL, OUTPUT);
   lastTouchTime = millis();  // Initialize last touch time
@@ -75,7 +69,7 @@ void draw(uint8_t page) {
 
 
 void drawTextView() {
-  sprite.setTextColor(TFT_WHITE, TFT_BLACK);
+  sprite.setTextColor(TFT_WHITE);
   sprite.setTextSize(2);
   sprite.drawString("This is a text view", STICKY_BAR_HEIGHT + 10, SCREEN_WIDTH / 2 - 10);
 }
@@ -83,9 +77,11 @@ void drawTextView() {
 
 void handleUnTouch(int x, int y) {
 
+  // For static views
   int transformedY = y;
   int transformedX = SCREEN_HEIGHT - x;
 
+  // For scrolling views
   int virtualX = transformedX;
   int virtualY = transformedY + view1scrollY;
 
@@ -130,13 +126,7 @@ void handleUnTouch(int x, int y) {
     } else if (activeButton == 2) {  // VIEW 2
 
     } else if (activeButton == 3) {  // VIEW 3
-      if (transformedY >= 20 && transformedY < 20 + COLOR_BAR_WIDTH) {
-        if (transformedX >= STICKY_BAR_HEIGHT + 10 && transformedX < STICKY_BAR_HEIGHT + 10 + COLOR_BAR_HEIGHT) {
-          colorSelected = findSelectedColorInColorBar(transformedY - 20);
-          cursorPosition = transformedY - 20;
-          drawColorPickerView(cursorPosition);
-        }
-      }
+      handleColorTabClick(transformedX, transformedY);
     }
   }
 }
@@ -149,9 +139,12 @@ void loop() {
 
   // ANIMATIONS ON THE PAGES :
   if (activeButton == 3) {
-    drawBreathingColorAnim(cursorPosition, currentTime);
-    drawMultiColorAnim(cursorPosition, currentTime);
-    delay(16);
+    drawAlertColorAnim(cursorPosition, currentTime);
+    drawHorizontalBarColorAnim(cursorPosition, currentTime);
+    drawVerticalBarColorAnim(cursorPosition, currentTime);
+    drawDiagonalBarColorAnim(cursorPosition, currentTime);
+    //drawMultiColorAnim(cursorPosition, currentTime);
+    delay(15);
   }
 
   // TOUCH :

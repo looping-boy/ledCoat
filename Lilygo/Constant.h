@@ -1,3 +1,4 @@
+#include <sys/_stdint.h>
 // ColorTab.h
 #ifndef CONSTANT_H
 #define CONSTANT_H
@@ -23,6 +24,7 @@ TFT_eSprite sprite = TFT_eSprite(&tft);
 const int STICKY_BAR_HEIGHT = 40;
 const int SPACE_BETWEEN_SWITCH = 100;
 const int STICKY_BAR_COLOR = TFT_BLACK;
+const int BUTTON_SIZE = 40;
 
 // Scroll offset
 int view1scrollY = 0;
@@ -46,5 +48,12 @@ const int SCREEN_WIDTH = 320;
 float velocityY = 0;
 bool isScrolling = false;
 int lastTouchY = -1;
+
+// Variables for touch handling
+bool touchActive = false;
+int cursorPosition = 150;  // Position of the cursor on the bar
+
+// State value
+int colorSelected = 0;
 
 #endif
