@@ -11,10 +11,13 @@
 
 #define NUM_STRIPS 4
 #define SIZE_ANIM 1856
-#define BRIGHTNESS 255
+#define MAX_BRIGHTNESS 255
+#define BRIGHTNESS 20
+#define shutdownPin D3
+#define POT_PIN D0  
+#define BATTERY_PIN D1  
 
 CRGB leds[NUM_STRIPS][500];
-#include "I2SClocklessVirtualLedDriver.h"
 #include "GifAnimations.h"
 #include "ConvertedGifs.h"
 #include "Squeletons.h"
@@ -111,44 +114,72 @@ LedInfo ledMappingVertical[72] = {
     {0, 17, 434, 1839, 5, true} // TOTAL 1856
 };
 
+void readBatteryVoltage() {
+  int batteryValue = analogRead(BATTERY_PIN);
+  if (batteryValue < 1700) {
+    delay(1000);
+    digitalWrite(shutdownPin, LOW);
+    delay(1000);
+    digitalWrite(shutdownPin, HIGH);
+    digitalWrite(shutdownPin, LOW);
+  }
+}
 
+void updateBrightness() {
+  int potValue = analogRead(POT_PIN);
+  int brightness = mapPotValueToBrightness(potValue);
+  FastLED.setBrightness(brightness);
+}
+
+int mapPotValueToBrightness(int potValue) {
+  Serial.printf("Pot value %.2f \n",(float)potValue);
+  float scale = (float)potValue / 3000.0; // Scale to range 0.0 to 1.0
+  float expBrightness = 10 + pow(scale, 2.5) * (MAX_BRIGHTNESS - 10); 
+  return constrain((int)expBrightness, 10, MAX_BRIGHTNESS);
+}
 
 // For mirroring strips, all the "special" stuff happens just in setup.  We
 // just addLeds multiple times, once for each strip
 void setup() {
   Serial.begin(115200);
-  FastLED.addLeds<NEOPIXEL, 2>(leds[1], 451);
-  FastLED.addLeds<NEOPIXEL, 4>(leds[2], 477);
-  FastLED.addLeds<NEOPIXEL, 5>(leds[3], 477);
-  FastLED.addLeds<NEOPIXEL, 23>(leds[0], 451);
-  pinMode(18, OUTPUT);
+
+  pinMode(shutdownPin, OUTPUT);
+  digitalWrite(shutdownPin, LOW);
+
+  FastLED.addLeds<NEOPIXEL, D7>(leds[1], 451);
+  FastLED.addLeds<NEOPIXEL, D8>(leds[2], 477);
+  FastLED.addLeds<NEOPIXEL, D9>(leds[3], 477);
+  FastLED.addLeds<NEOPIXEL, D10>(leds[0], 451);
+  //pinMode(18, OUTPUT);
+  updateBrightness();
 
   // FastLED.addLeds<NEOPIXEL, 21>(leds[4], 70);
 }
 
 long time1,time2,time3;
 void loop() {
-  FastLED.setBrightness(BRIGHTNESS);
-  //rainbowCycle(1);
-  //horizontalLignRainbowCycle(1);
-  // upLign(1);
-  //verticalRainbowCycle(1);
+  readBatteryVoltage();
+  updateBrightness();
+  // rainbowCycle(1);
+  // horizontalLignRainbowCycle(1);
+  upLign(1);
+  // verticalRainbowCycle(1);
   
   // breathing();
-  breathingSmall();
+  // breathingSmall();
   //printNiantCat();
   // circleRainbowCycle(5);
-  //printLooping2();
+  // printLooping2();
   // displayGif(1);
   // animateGif();
   // batteryLevel();
-  //psyAnim();
+  // psyAnim();
   // pongAnim();
   // spiralAnim();
-  //diagonalRainbowCycle(1);
+  // diagonalRainbowCycle(1);
   // warningAnim();
   // warningAnim();
-  //checkBlueAnim();
+  // checkBlueAnim();
   // blink();
   // explosion(5);
   // circleRainbowCycle(5);
@@ -161,10 +192,10 @@ void breathingSmall() {
     }
     FastLED.show();
   }
-  tone(18, 500); // Send 1KHz sound signal...
-  delay(500);        // ...for 1 sec
-  noTone(18);     // Stop sound...
-  delay(500); 
+  // tone(18, 500); // Send 1KHz sound signal...
+  // delay(500);        // ...for 1 sec
+  // noTone(18);     // Stop sound...
+  // delay(500); 
 }
 
 void explosion(uint8_t loop) {

@@ -97,7 +97,7 @@ void handleUnTouch(int x, int y) {
       sendValue(2);
     } else if (transformedY >= 100 && transformedY < 100 + BUTTON_SIZE) {
       (activeButton == 3) ? null() : draw(3);
-      sendValue(3);
+      sendValue(4);
     }
   }
   // VIEWS

@@ -8,8 +8,8 @@
 #define MAX_BRIGHTNESS 20
 #define POT_PIN D0  
 #define BATTERY_PIN D1  
-#define shutdownPin D10 
-#define MOTOR_PIN D9
+#define shutdownPin D9 
+#define MOTOR_PIN D10
 #define WIFI_CHANNEL 3
 
 CRGB leds[NUM_STRIPS][72];
@@ -48,7 +48,7 @@ void setup() {
 }
 
 void loop() {
-  updateBrightness();
+  //updateBrightness();
   readBatteryVoltage();
   
   switch (something) {
@@ -60,6 +60,9 @@ void loop() {
       break;
     case 2:
       allRedStep();
+      break;
+    case 4:
+      FastLED.setBrightness(250);
       break;
   }
   
