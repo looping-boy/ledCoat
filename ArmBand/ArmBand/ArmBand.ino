@@ -53,26 +53,42 @@ void loop() {
   
   switch (something) {
     case 0:
-      breathingSmallStep();
+      allWhiteStep(CRGB::Blue);
       break;
     case 1:
-      allWhiteStep();
+      allWhiteStep(CRGB::Red);
       break;
     case 2:
-      allRedStep();
+      allWhiteStep(CRGB::Yellow);
+      break;
+    case 3:
+      allWhiteStep(CRGB::Purple);
       break;
     case 4:
-      FastLED.setBrightness(250);
+      allWhiteStep(CRGB::Green);
       break;
   }
   
   FastLED.show();
 }
 
+void allWhiteStep(CRGB color) {
+  // for(uint16_t j=0; j<256; j++) {
+    for(uint16_t i=0; i<144; i++) {
+        leds[1][i] = color;
+    }
+    //FastLED.show();
+  // }
+  // tone(18, 500); // Send 1KHz sound signal...
+  // delay(500);        // ...for 1 sec
+  // noTone(18);     // Stop sound...
+  // delay(500); 
+}
+
 void updateBrightness() {
   int potValue = analogRead(POT_PIN);
   int brightness = mapPotValueToBrightness(potValue);
-  FastLED.setBrightness(brightness);
+  FastLED.setBrightness(50);
 }
 
 void readBatteryVoltage() {
@@ -106,12 +122,6 @@ void breathingSmallStep() {
   }
   j++;
   if (j >= 256) j = 0;
-}
-
-void allWhiteStep() {
-  for(uint16_t i = 0; i < SIZE_ANIM; i++) {
-    leds[1][i] = CRGB(0xFFFFFFFF);
-  }
 }
 
 void allRedStep() {

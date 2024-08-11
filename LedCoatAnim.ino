@@ -205,7 +205,7 @@ void setup() {
 long time1,time2,time3;
 void loop() {
   //readBatteryVoltage();
-  //updateBrightness();
+  updateBrightness();
 
   switch (something) {
     case 0:
@@ -267,12 +267,17 @@ void breathingSmall() {
 }
 
 void allWhiteStep(CRGB color) {
-  // for(uint16_t j=0; j<256; j++) {
-    for(uint16_t i=0; i<20; i++) {
+  
+    for(uint16_t i=0; i<200; i++) {
         leds[1][i] = color;
+        leds[0][i] = color;
+    }
+    for(uint16_t i=0; i<200; i++) {
+        leds[2][i] = color;
+        leds[3][i] = color;
     }
     //FastLED.show();
-  // }
+  
   // tone(18, 500); // Send 1KHz sound signal...
   // delay(500);        // ...for 1 sec
   // noTone(18);     // Stop sound...
