@@ -25,6 +25,7 @@ const int STICKY_BAR_HEIGHT = 40;
 const int SPACE_BETWEEN_SWITCH = 100;
 const int STICKY_BAR_COLOR = TFT_BLACK;
 const int BUTTON_SIZE = 40;
+const int BIG_BUTTON_SIZE = 90;
 
 // Scroll offset
 int view1scrollY = 0;

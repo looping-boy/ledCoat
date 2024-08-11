@@ -8,6 +8,7 @@
 #include "Tabs.h"
 #include "ColorView.h"
 #include "SwitchView.h"
+#include "BPMView.h"
 #include "ESPSender.h"
 
 #define PIN_LCD_BL 38
@@ -15,6 +16,9 @@
 unsigned long lastTouchTime = 0;
 const unsigned long screenTimeout = 1000000;
 bool screenOn = true;
+uint8_t bpmMain = 120;
+unsigned long beatMillis = 0;
+int x = 0;
 
 // Variables to handle scrolling and momentum
 unsigned long lastUpdateTime = 0;
@@ -37,6 +41,7 @@ void setup() {
   draw(activeButton);
   pinMode(PIN_LCD_BL, OUTPUT);
   lastTouchTime = millis();  // Initialize last touch time
+  touch.init();
 }
 
 void draw(uint8_t page) {
@@ -50,6 +55,7 @@ void draw(uint8_t page) {
   drawButton(0, 0, "B1", 1);
   drawButton(50, 0, "B2", 2);
   drawButton(100, 0, "B3", 3);
+  drawButton(150, 0, "B4", 4);
 
   // Draw different views based on the active button
   switch (activeButton) {
@@ -61,6 +67,9 @@ void draw(uint8_t page) {
       break;
     case 3:
       drawColorPickerView(cursorPosition);
+      break;
+    case 4:
+      drawBPMView();
       break;
     default:
       break;
@@ -91,13 +100,12 @@ void handleUnTouch(int x, int y) {
   if (transformedX < STICKY_BAR_HEIGHT) {
     if (transformedY >= 0 && transformedY < BUTTON_SIZE) {
       (activeButton == 1) ? null() : draw(1);
-      sendValue(1);
     } else if (transformedY >= 50 && transformedY < 50 + BUTTON_SIZE) {
       (activeButton == 2) ? null() : draw(2);
-      sendValue(2);
     } else if (transformedY >= 100 && transformedY < 100 + BUTTON_SIZE) {
       (activeButton == 3) ? null() : draw(3);
-      sendValue(4);
+    } else if (transformedY >= 150 && transformedY < 150 + BUTTON_SIZE) {
+      (activeButton == 4) ? null() : draw(4);
     }
   }
   // VIEWS
@@ -106,32 +114,32 @@ void handleUnTouch(int x, int y) {
       if (virtualY >= 20 && virtualY < 20 + 80) {
         if (virtualX >= STICKY_BAR_HEIGHT + 30 && virtualX < STICKY_BAR_HEIGHT + 30 + 30) {
           switch1 = !switch1;
-          redrawView1();
+          //redrawView1();
         } else if (virtualX >= STICKY_BAR_HEIGHT + 30 + 60 && virtualX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
           switch4 = !switch4;
-          redrawView1();
+          //redrawView1();
         }
       } else if (virtualY >= SPACE_BETWEEN_SWITCH + 20 && virtualY < SPACE_BETWEEN_SWITCH + 20 + 80) {
         if (virtualX >= STICKY_BAR_HEIGHT + 30 && virtualX < STICKY_BAR_HEIGHT + 30 + 30) {
           switch2 = !switch2;
-          redrawView1();
+          //redrawView1();
         } else if (virtualX >= STICKY_BAR_HEIGHT + 30 + 60 && virtualX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
           switch5 = !switch5;
-          redrawView1();
+          //redrawView1();
         }
       } else if (virtualY >= SPACE_BETWEEN_SWITCH * 2 + 20 && virtualY < SPACE_BETWEEN_SWITCH * 2 + 20 + 80) {
         if (virtualX >= STICKY_BAR_HEIGHT + 30 && virtualX < STICKY_BAR_HEIGHT + 30 + 30) {
           switch3 = !switch3;
-          redrawView1();
+          //redrawView1();
         } else if (virtualX >= STICKY_BAR_HEIGHT + 30 + 60 && virtualX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
           switch6 = !switch6;
-          redrawView1();
+          //redrawView1();
         }
       }
     } else if (activeButton == 2) {  // VIEW 2
 
     } else if (activeButton == 3) {  // VIEW 3
-      handleColorTabClick(transformedX, transformedY);
+      //handleColorTabClick(transformedX, transformedY);
     }
   }
 }
@@ -142,37 +150,60 @@ void loop() {
   float deltaTime = (currentTime - lastUpdateTime) / 1000.0;
   lastUpdateTime = currentTime;
 
-  // ANIMATIONS ON THE PAGES :
-  if (activeButton == 3) {
-    drawAlertColorAnim(cursorPosition, currentTime);
-    drawHorizontalBarColorAnim(cursorPosition, currentTime);
-    drawVerticalBarColorAnim(cursorPosition, currentTime);
-    drawDiagonalBarColorAnim(cursorPosition, currentTime);
-    //drawMultiColorAnim(cursorPosition, currentTime);
-    delay(15);
+  unsigned long interval = 60000 / bpmMain;  // Interval between beats in milliseconds
+  //srand(time(NULL)); // Seed the random number generator
+
+  // Check if the current time has passed the interval time
+  if (currentTime - beatMillis >= interval) {
+    beatMillis = currentTime;
+    x++;
+    sendValue(x % 4 + 1) ;
   }
+
+
+
+
+
+
+
+
+
+  // ANIMATIONS ON THE PAGES :
+  // if (activeButton == 3) {
+  //   drawAlertColorAnim(cursorPosition, currentTime);
+  //   drawHorizontalBarColorAnim(cursorPosition, currentTime);
+  //   drawVerticalBarColorAnim(cursorPosition, currentTime);
+  //   drawDiagonalBarColorAnim(cursorPosition, currentTime);
+  //   //drawMultiColorAnim(cursorPosition, currentTime);
+  //   //delay(15);
+  // }
+
+  TP_Point t = touch.getPoint(0);
+  handleUnTouch(t.x, t.y);
 
   // TOUCH :
-  if (touch.read()) {
-    lastTouchTime = millis();
-    (screenOn) ? ifScreenOn(deltaTime, currentTime) : ifScreenOff();
-  } else {
+  // if (touch.read()) {
+  //   // lastTouchTime = millis();
+  //   // (screenOn) ? ifScreenOn(deltaTime, currentTime) : ifScreenOff();
+  // } else {
 
-    // Untouch
-    ifOnFingerUntouch(currentTime);
+  //   // TP_Point t = touch.getPoint(0);
+  //   // handleUnTouch(t.x, t.y);
+  //   // Untouch
+  //   // ifOnFingerUntouch(currentTime);
 
-    // Scroll momentum
-    scrollMomentumView1(deltaTime);
+  //   // Scroll momentum
+  //   //scrollMomentumView1(deltaTime);
 
-    // Sleep mode
-    if (screenOn && millis() - lastTouchTime > screenTimeout) {
-      screenOn = false;
-      tft.writecommand(TFT_DISPOFF);
-      digitalWrite(PIN_LCD_BL, LOW);
-    }
-  }
+  //   // Sleep mode
+  //   // if (screenOn && millis() - lastTouchTime > screenTimeout) {
+  //   //   screenOn = false;
+  //   //   tft.writecommand(TFT_DISPOFF);
+  //   //   digitalWrite(PIN_LCD_BL, LOW);
+  //   // }
+  // }
 
-  delay(10);
+  //delay(10);
 }
 
 void ifScreenOff() {
@@ -195,7 +226,7 @@ void ifScreenOn(float deltaTime, unsigned long currentTime) {
       velocityY = 0;                 // Reset velocity when new touch
       touchStartTime = currentTime;  // Record the start time of the touch
     } else {
-      handleScrollingView1(touchY, deltaTime);
+      //handleScrollingView1(touchY, deltaTime);
     }
   }
 }
@@ -203,15 +234,21 @@ void ifScreenOn(float deltaTime, unsigned long currentTime) {
 void ifOnFingerUntouch(unsigned long currentTime) {
   if (touchActive) {
     // Handle normal touch
-    if (!isScrolling) {
-      TP_Point t = touch.getPoint(0);
-      handleUnTouch(t.x, t.y);
+    // if (!isScrolling) {
+    //   TP_Point t = touch.getPoint(0);
+    //   handleUnTouch(t.x, t.y);
+    // }
+
+    if (activeButton == 4) {
+     bpmMain = BPMViewEvent();
+
+     //sendValue(pattern);
     }
 
     // Check if the touch was a hold without significant movement
-    if (currentTime - touchStartTime > HOLD_THRESHOLD && abs(lastTouchY - touch.getPoint(0).y) <= MOVE_THRESHOLD) {
-      velocityY = 0;
-    }
+    // if (currentTime - touchStartTime > HOLD_THRESHOLD && abs(lastTouchY - touch.getPoint(0).y) <= MOVE_THRESHOLD) {
+    //   velocityY = 0;
+    // }
 
     // End of touch
     lastTouchY = -1;

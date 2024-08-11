@@ -35,6 +35,9 @@ CRGB leds[NUM_STRIPS][500];
 #define SPIRAL 9
 #define WARNING 9
 
+int currentStep = 0;
+int something = 0;
+
 
   // verticalRainbowCycle(1);
   
@@ -201,21 +204,24 @@ void setup() {
 
 long time1,time2,time3;
 void loop() {
-  readBatteryVoltage();
-  updateBrightness();
+  //readBatteryVoltage();
+  //updateBrightness();
 
   switch (something) {
     case 0:
-      breathingSmall();
+      allWhiteStep(CRGB::Blue);
       break;
     case 1:
-      allWhiteStep();
+      allWhiteStep(CRGB::Red);
       break;
     case 2:
-      upLign(1);
+      allWhiteStep(CRGB::Yellow);
+      break;
+    case 3:
+      allWhiteStep(CRGB::Purple);
       break;
     case 4:
-      FastLED.setBrightness(250);
+      allWhiteStep(CRGB::Green);
       break;
   }
   
@@ -260,13 +266,13 @@ void breathingSmall() {
   // delay(500); 
 }
 
-void allWhiteStep() {
-  for(uint16_t j=0; j<256; j++) {
-    for(uint16_t i=0; i<200; i++) {
-        leds[1][i] = CRGB::Blue;
+void allWhiteStep(CRGB color) {
+  // for(uint16_t j=0; j<256; j++) {
+    for(uint16_t i=0; i<20; i++) {
+        leds[1][i] = color;
     }
     //FastLED.show();
-  }
+  // }
   // tone(18, 500); // Send 1KHz sound signal...
   // delay(500);        // ...for 1 sec
   // noTone(18);     // Stop sound...
