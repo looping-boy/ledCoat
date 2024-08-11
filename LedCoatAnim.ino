@@ -1,13 +1,7 @@
-/// @file    ArrayOfLedArrays.ino
-/// @brief   Set up three LED strips, all running from an array of arrays
-/// @example ArrayOfLedArrays.ino
-
-// ArrayOfLedArrays - see https://github.com/FastLED/FastLED/wiki/Multiple-Controller-Examples for more info on
-// using multiple controllers.  In this example, we're going to set up three NEOPIXEL strips on three
-// different pins, each strip getting its own CRGB array to be played with, only this time they're going
-// to be all parts of an array of arrays.
-
 #include <FastLED.h>
+#include <esp_now.h>
+#include <WiFi.h>
+#include <esp_wifi.h>
 
 #define NUM_STRIPS 4
 #define SIZE_ANIM 1856
@@ -15,12 +9,53 @@
 #define BRIGHTNESS 20
 #define shutdownPin D3
 #define POT_PIN D0  
-#define BATTERY_PIN D1  
+#define BATTERY_PIN D1 
+
+#define WIFI_CHANNEL 3
 
 CRGB leds[NUM_STRIPS][500];
 #include "GifAnimations.h"
 #include "ConvertedGifs.h"
 #include "Squeletons.h"
+
+#define FULL 1
+#define FULL_VERTICAL 2
+#define FULL_HORIZONTAL 3
+#define FULL_DIAGONAL 4
+#define FULL_CIRCLE 5
+#define FULL_TRIANGLE 6
+#define FULL_ALARM 7
+
+#define RAIN 8
+#define LINE_HORIZONTAL 8
+#define SPARKLE 8
+
+#define GIF_PONG 9
+#define GIF_SPIRAL 9
+#define SPIRAL 9
+#define WARNING 9
+
+
+  // verticalRainbowCycle(1);
+  
+  // breathing();
+  // breathingSmall();
+  //printNiantCat();
+  // circleRainbowCycle(5);
+  // printLooping2();
+  // displayGif(1);
+  // animateGif();
+  // batteryLevel();
+  // psyAnim();
+  // pongAnim();
+  // spiralAnim();
+  // diagonalRainbowCycle(1);
+  // warningAnim();
+  // warningAnim();
+  // checkBlueAnim();
+  // blink();
+  // explosion(5);
+  // circleRainbowCycle(5);
 
 typedef struct {
     uint8_t pwmChannel;
@@ -138,8 +173,6 @@ int mapPotValueToBrightness(int potValue) {
   return constrain((int)expBrightness, 10, MAX_BRIGHTNESS);
 }
 
-// For mirroring strips, all the "special" stuff happens just in setup.  We
-// just addLeds multiple times, once for each strip
 void setup() {
   Serial.begin(115200);
 
@@ -150,19 +183,48 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, D8>(leds[2], 477);
   FastLED.addLeds<NEOPIXEL, D9>(leds[3], 477);
   FastLED.addLeds<NEOPIXEL, D10>(leds[0], 451);
-  //pinMode(18, OUTPUT);
+
   updateBrightness();
 
-  // FastLED.addLeds<NEOPIXEL, 21>(leds[4], 70);
+  // ------------- ESP NOW ---------------
+  WiFi.mode(WIFI_STA);
+  esp_wifi_set_promiscuous(true);
+  esp_wifi_set_channel(WIFI_CHANNEL, WIFI_SECOND_CHAN_NONE);
+  esp_wifi_set_promiscuous(false);
+  
+  if (esp_now_init() != ESP_OK) {
+    return;
+  }
+  
+  esp_now_register_recv_cb(data_received);
 }
 
 long time1,time2,time3;
 void loop() {
   readBatteryVoltage();
   updateBrightness();
+
+  switch (something) {
+    case 0:
+      breathingSmall();
+      break;
+    case 1:
+      allWhiteStep();
+      break;
+    case 2:
+      upLign(1);
+      break;
+    case 4:
+      FastLED.setBrightness(250);
+      break;
+  }
+  
+  
+
+  FastLED.show();
   // rainbowCycle(1);
   // horizontalLignRainbowCycle(1);
-  upLign(1);
+  
   // verticalRainbowCycle(1);
   
   // breathing();
@@ -187,10 +249,23 @@ void loop() {
 
 void breathingSmall() {
   for(uint16_t j=0; j<256; j++) {
-    for(uint16_t i=0; i<288; i++) {
-        leds[1][i] = CRGB(Wheel(((5 * 256 / 288) + j) & 255));
+    for(uint16_t i=0; i<200; i++) {
+        leds[1][i] = CRGB(Wheel(((5 * 256 / 200) + j) & 255));
     }
-    FastLED.show();
+    //FastLED.show();
+  }
+  // tone(18, 500); // Send 1KHz sound signal...
+  // delay(500);        // ...for 1 sec
+  // noTone(18);     // Stop sound...
+  // delay(500); 
+}
+
+void allWhiteStep() {
+  for(uint16_t j=0; j<256; j++) {
+    for(uint16_t i=0; i<200; i++) {
+        leds[1][i] = CRGB::Blue;
+    }
+    //FastLED.show();
   }
   // tone(18, 500); // Send 1KHz sound signal...
   // delay(500);        // ...for 1 sec
@@ -302,8 +377,8 @@ void upLign(uint8_t wait) {
         }
       }
     }
-    FastLED.show();
-    delay(wait);
+    //FastLED.show();
+    //delay(wait);
   }
 }
 
@@ -441,14 +516,9 @@ void displayGif(uint8_t wait) {
       time3=ESP.getCycleCount();
       Serial.printf("Calcul pixel Total fps:%.2f \n",(float)240000000/(time3-time1));
     }
-    
-    
 }
 
 void animateGif() {
-  // int total = sizeof(movingRainbow);
-  // uint16_t frameSize = sizeof(movingRainbow[0]);
-  // uint8_t numberOfFrame = total / frameSize;
     for (uint16_t f = 0; f < 20; f++) {
       time1=ESP.getCycleCount();
       for(uint16_t i = 0; i < 2664; i++) {
@@ -553,8 +623,6 @@ void checkBlueAnim() {
     }       
 }
 
-
-
 uint32_t Wheel(byte WheelPos) {
   WheelPos = 255 - WheelPos; // Reverse direction for smoother color transition
   if (WheelPos < 85) {
@@ -572,20 +640,26 @@ uint32_t Wheel(byte WheelPos) {
   }
 }
 
-// uint32_t Wheel(byte value) {
-//     //Serial.printf("Byte : %d", value);
-//     // Ensure the input value is within the valid range
-//     if (value > 255) {
-//         value = 255;
-//     }
-    
-//     // Calculate the red component based on the input value
-//     uint8_t red = value;
-
-//     // Return the RGB color as a 32-bit integer
-//     return rgbToUint32(red, 0, 0);
-// }
-
 uint32_t rgbToUint32(uint8_t red, uint8_t green, uint8_t blue) {
     return ((uint32_t)red << 16) | ((uint32_t)green << 8) | blue;
+}
+
+// ESP NOW
+
+
+typedef struct struct_message {
+  char character[100];
+  int integer;
+  float floating_value;
+  bool bool_value;
+} struct_message;
+
+struct_message incomingMessage;
+
+void data_received(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  memcpy(&incomingMessage, incomingData, sizeof(incomingMessage));
+
+  // Handle incoming message
+  something = incomingMessage.integer;
+  currentStep = 0; // Reset the animation step when a new message is received
 }
