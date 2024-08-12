@@ -11,7 +11,7 @@ const unsigned long screenTimeout = 1000000;
 // bool screenOn = true;
 uint8_t bpmMain = 120;
 unsigned long beatMillis = 0;
-int x = 0;
+uint8_t x = 0;
 
 // // Variables to handle scrolling and momentum
 unsigned long lastUpdateTime = 0;
@@ -95,7 +95,8 @@ void loop() {
   if (currentTime - beatMillis >= interval) {
     beatMillis = currentTime;
     x++;
-    sendValue(x % 4 + 1) ;
+    uint8_t messageType = 2;
+    sendValue(messageType, x % 4 + 1) ;
     delay(2);
   }
   

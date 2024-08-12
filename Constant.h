@@ -5,9 +5,11 @@
 #define NUM_STRIPS 4
 #define SIZE_ANIM 1856
 #define MAX_BRIGHTNESS 255
-#define BRIGHTNESS 20
 #define POT_PIN D0  
-#define BATTERY_PIN D1 
+#define BATTERY_PIN D1
+
+uint8_t brightness = 20;
+uint32_t color = 255; // Blue
 CRGB leds[NUM_STRIPS][500];
 
 // SHUTDOWN
@@ -34,12 +36,11 @@ CRGB leds[NUM_STRIPS][500];
 #define SPIRAL 9
 #define WARNING 9
 
-int currentStep = 0;
-int something = 0;
-
+uint8_t pattern = 1;
 uint8_t bpm = 120;
 
-long time1,time2,time3;
+
+long time1,time2,time3; // For TIME LOGS
 
 
 #endif 

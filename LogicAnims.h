@@ -14,14 +14,14 @@ void breathingSmall() {
   }
 }
 
-void allWhiteStep(CRGB color) {
-    for(uint16_t i=0; i<200; i++) {
-        leds[1][i] = color;
-        leds[0][i] = color;
+void allWhiteStep(CRGB colorValue) {
+    for(uint16_t i=0; i<451; i++) {
+        leds[1][i] = colorValue;
+        leds[0][i] = colorValue;
     }
-    for(uint16_t i=0; i<200; i++) {
-        leds[2][i] = color;
-        leds[3][i] = color;
+    for(uint16_t i=0; i<477; i++) {
+        leds[2][i] = colorValue;
+        leds[3][i] = colorValue;
     }
 }
 

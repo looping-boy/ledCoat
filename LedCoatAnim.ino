@@ -36,7 +36,7 @@ void loop() {
   //readBatteryVoltage();
   updateBrightness();
 
-  switch (something) {
+  switch (pattern) {
     case 0:
       allWhiteStep(CRGB::Blue);
       break;

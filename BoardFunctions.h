@@ -16,15 +16,14 @@ void readBatteryVoltage() {
 
 void updateBrightness() {
   int potValue = analogRead(POT_PIN);
-  int brightness = mapPotValueToBrightness(potValue);
-  FastLED.setBrightness(brightness);
+  uint8_t brightnessValue = mapPotValueToBrightness(potValue);
+  FastLED.setBrightness(brightnessValue);
 }
 
 int mapPotValueToBrightness(int potValue) {
-  //Serial.printf("Pot value %.2f \n",(float)potValue);
   float scale = (float)potValue / 3000.0; // Scale to range 0.0 to 1.0
   float expBrightness = 10 + pow(scale, 2.5) * (MAX_BRIGHTNESS - 10); 
-  return constrain((int)expBrightness, 10, MAX_BRIGHTNESS);
+  return constrain((int)expBrightness, 10, MAX_BRIGHTNESS - 1);
 }
 
 #endif 
