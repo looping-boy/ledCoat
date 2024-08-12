@@ -71,5 +71,10 @@ int cursorPosition = 150;  // Position of the cursor on the bar
 
 // State value
 int colorSelected = 0;
+boolean isBPMMode = false;
+uint8_t activeButton = 3;
+
+// Anim values
+uint8_t bpmMain = 120;
 
 #endif

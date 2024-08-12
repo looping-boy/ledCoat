@@ -9,8 +9,9 @@
 unsigned long lastTouchTime = 0;
 const unsigned long screenTimeout = 1000000;
 // bool screenOn = true;
-uint8_t bpmMain = 120;
 unsigned long beatMillis = 0;
+unsigned long UIMillis = 0;
+unsigned long intervalUI = 1000 / 5;
 uint8_t x = 0;
 
 // // Variables to handle scrolling and momentum
@@ -88,16 +89,31 @@ void loop() {
   float deltaTime = (currentTime - lastUpdateTime) / 1000.0;
   lastUpdateTime = currentTime;
 
-  unsigned long interval = 60000 / bpmMain;  // Interval between beats in milliseconds
+  if (activeButton == 3) {
+    if (currentTime - UIMillis >= intervalUI) {
+      UIMillis = currentTime;
+      drawSelectedColor(cursorPosition);
+      drawAlertColorAnim(cursorPosition, currentTime);
+      drawHorizontalBarColorAnim(cursorPosition, currentTime);
+      drawVerticalBarColorAnim(cursorPosition, currentTime);
+      drawDiagonalBarColorAnim(cursorPosition, currentTime);
+    }
+    //drawMultiColorAnim(cursorPosition, currentTime);
+    //delay(15);
+  }
+
+  unsigned long intervalBPM = 60000 / bpmMain;  // Interval between beats in milliseconds
   //srand(time(NULL)); // Seed the random number generator
 
   // Check if the current time has passed the interval time
-  if (currentTime - beatMillis >= interval) {
-    beatMillis = currentTime;
-    x++;
-    uint8_t messageType = 2;
-    sendValue(messageType, x % 4 + 1) ;
-    delay(2);
+  if (isBPMMode) {
+    if (currentTime - beatMillis >= intervalBPM) {
+      beatMillis = currentTime;
+      x++;
+      uint8_t messageType = 2;
+      sendValue(messageType, x % 4 + 1);
+      delay(2);
+    }
   }
   
   if (touch.read()) {
@@ -239,7 +255,7 @@ void handleUnTouch(int x, int y) {
     } else if (activeButton == 2) {  // VIEW 2
 
     } else if (activeButton == 3) {  // VIEW 3
-      //handleColorTabClick(transformedX, transformedY);
+      handleColorTabClick(transformedX, transformedY);
     } else if (activeButton == 4) {  // VIEW 3
       //handleColorTabClick(transformedX, transformedY);
       bpmMain = BPMViewEvent();
@@ -271,15 +287,7 @@ void handleUnTouch(int x, int y) {
 
 
 
-  // ANIMATIONS ON THE PAGES :
-  // if (activeButton == 3) {
-  //   drawAlertColorAnim(cursorPosition, currentTime);
-  //   drawHorizontalBarColorAnim(cursorPosition, currentTime);
-  //   drawVerticalBarColorAnim(cursorPosition, currentTime);
-  //   drawDiagonalBarColorAnim(cursorPosition, currentTime);
-  //   //drawMultiColorAnim(cursorPosition, currentTime);
-  //   //delay(15);
-  // }
+  // ANIMATIONS ON THE PAGES 
 
   // TP_Point t = touch.getPoint(0);
   // handleUnTouch(t.x, t.y);

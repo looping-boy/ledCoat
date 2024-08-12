@@ -230,6 +230,7 @@ void processInputs() {
 
   if (transformedY < BIG_BUTTONS_Y_OFFSET + BIG_BUTTON_SIZE && transformedY > BIG_BUTTONS_Y_OFFSET && transformedX >= M_20 + (BIG_BUTTON_SIZE + SPACE)*2 && transformedX < M_20 + (BIG_BUTTON_SIZE + SPACE)*2 + BIG_BUTTON_SIZE) {
     newSwitchValue = !newSwitchValue;
+    isBPMMode = !isBPMMode;
     if (newSwitchValue) drawBPM(111);
     else drawBPM(222);
   }
