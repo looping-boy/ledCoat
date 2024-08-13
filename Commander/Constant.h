@@ -4,7 +4,7 @@
 #define CONSTANT_H
 
 #include "Arduino.h"
-#include "TFT_eSPI.h" 
+#include "TFT_eSPI.h"
 
 // Scroll
 #define FRICTION 0.95       // Friction factor for slowing down
@@ -12,16 +12,16 @@
 #define HOLD_THRESHOLD 200  // Time in milliseconds to consider a hold
 #define MOVE_THRESHOLD 5    // Minimum movement to consider a scroll
 
-#define PIN_LCD_BL                   38
-#define PIN_BUTTON_1                 0
-#define PIN_BUTTON_2                 14
-#define PIN_BAT_VOLT                 4
-#define PIN_LCD_BL                   38
-#define PIN_POWER_ON                 15
-#define PIN_IIC_SCL                  17
-#define PIN_IIC_SDA                  18
-#define PIN_TOUCH_INT                16
-#define PIN_TOUCH_RES                21
+#define PIN_LCD_BL 38
+#define PIN_BUTTON_1 0
+#define PIN_BUTTON_2 14
+#define PIN_BAT_VOLT 4
+#define PIN_LCD_BL 38
+#define PIN_POWER_ON 15
+#define PIN_IIC_SCL 17
+#define PIN_IIC_SDA 18
+#define PIN_TOUCH_INT 16
+#define PIN_TOUCH_RES 21
 
 #define TOUCH_MODULES_CST_SELF
 #include "Arduino.h"
@@ -60,7 +60,7 @@ const int VIRTUAL_HEIGHT = 480;  // Larger than the screen height
 const int SCREEN_HEIGHT = 170;
 const int SCREEN_WIDTH = 320;
 
-// Velocity 
+// Velocity
 float velocityY = 0;
 bool isScrolling = false;
 int lastTouchY = -1;

@@ -53,7 +53,7 @@ void loop() {
 
   switch (pattern) {
     case 0:
-      gradientPulse(currentTime, startAnimationTime);
+      upLine(currentTime, startAnimationTime);
       break;
     case 1:
       myMatrixRain(currentTime, startAnimationTime);

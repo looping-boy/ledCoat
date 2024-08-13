@@ -51,6 +51,11 @@ uint16_t hue = 200;
 #define MAX_LEDS_PER_STRIP 100 // Adjust this to the maximum number of LEDs per strip
 long rainPosition[NUM_VERTICAL_STRIPS];
 
+uint8_t tweakQuantity = 16;  // out of 255
+uint8_t tweakBPM = 16;       // out of 255
+uint8_t tweakColor = 16;     // out of 255
+uint8_t tweakPhase = 1;      // Tested with 2 works
+
 
 
 long time1,time2,time3; // For TIME LOGS

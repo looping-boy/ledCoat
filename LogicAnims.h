@@ -52,9 +52,6 @@ void colorfulSparkle() {
   fadeToBlackBy(leds[2], 477, 20);
   fadeToBlackBy(leds[3], 477, 20);
 
-  originalBrightness = FastLED.getBrightness();
-  FastLED.setBrightness(MAX_BRIGHTNESS);
-
   for (uint8_t i = 0; i < 2; i++) {
     leds[i][random(451)] = CHSV(random(0, 255), 255, 255);  // Random color with full saturation and brightness
   }
@@ -64,7 +61,6 @@ void colorfulSparkle() {
   }
 
   FastLED.show();
-  FastLED.setBrightness(originalBrightness);
 }
 
 void fadeToBlackBy(CRGB* leds, int num_leds, uint8_t fadeBy) {
@@ -241,21 +237,65 @@ void horizontalLignRainbowCycle(uint8_t wait) {
   }
 }
 
-void upLine() {
-  for (uint16_t j = 37; j > 0; j--) {
-    for (int i = 0; i < 72; i++) {
-      if (j == i) {
+void downLine(long currentTime, long startAnimationTime) {
+  float barCycleTime = (60000 / bpm) * (tweakBPM / 16);
+  uint8_t j = (uint8_t)((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 37) / barCycleTime);
+  FastLED.clear();
+  for (int i = 0; i < 72; i++) {
+    if (j == i) {
         for (int k = 0; k < 72; k++) {
           leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(Wheel(((256 - i * 256 / 72) + (256 - j * (256 / 37))) & 255));
         }
-      } else {
+      } 
+    }
+  FastLED.show();
+}
+
+// void upLine(long currentTime, long startAnimationTime) {
+//   float barCycleTime = (60000 / bpm) * (tweakBPM / 8);
+//   uint8_t j = (uint8_t) 37 - ((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 37) / barCycleTime);
+//   uint8_t h = (uint8_t) 37 - (uint8_t)(((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 37) / barCycleTime) + 19 ) % 37;  
+//   FastLED.clear();
+//   for (int i = 0; i < 72; i++) {
+//     if (j == i) {
+//         for (int k = 0; k < 72; k++) {
+//           leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(Wheel(((256 - i * 256 / 72) + (256 - j * (256 / 37))) & 255));
+//         }
+//     } 
+//     if (h == i) {
+//         for (int k = 0; k < 72; k++) {
+//           leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(Wheel(((256 - i * 256 / 72) + (256 - j * (256 / 37))) & 255));
+//         }
+//     } 
+//   }
+//   FastLED.show();
+// }
+
+void upLine(long currentTime, long startAnimationTime) {
+  float barCycleTime = (60000 / bpm) * (tweakBPM / (16 / tweakPhase));
+
+  FastLED.clear();
+  
+  // Iterate over two phases
+  for (int phase = 0; phase < tweakPhase; phase++) {
+    uint8_t pos = (uint8_t) 37 - (uint8_t)(((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 37) / barCycleTime) + (phase * (37 / 2))) % 37;
+
+    for (int i = 0; i < 72; i++) {
+      if (pos == i) {
         for (int k = 0; k < 72; k++) {
-          leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(0x00000000);
+          if (pos > 15 && random(1, 38 - pos) == 1) {
+            leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB::White;
+          } else {
+            leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CRGB(Wheel(((256 - i * 256 / 72) + (256 - pos * (256 / 37))) & 255));
+          }
         }
       }
     }
   }
+  
+  FastLED.show();
 }
+
 
 void diagonalRainbowCycle(uint8_t wait) {
   for (uint16_t j = 0; j < 256; j++) {
@@ -285,7 +325,7 @@ void circleRainbowCycle(uint8_t loop) {
 
 // The first one anim
 void rainbowCycle(long currentTime, long startAnimationTime) {
-  float barCycleTime = (60000 / bpm) / 16;
+  float barCycleTime = ((60000 / bpm)) * (tweakBPM / 4);
   uint8_t j = (uint8_t)((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255) / barCycleTime);
   int l = 0;
   for (uint16_t i = 0; i < 72; i++) {
@@ -310,10 +350,10 @@ void myMatrixRain(long currentTime, long startAnimationTime) {
   fadeToBlackBy(leds[2], 477, 40);
   fadeToBlackBy(leds[3], 477, 40);
 
-  float barCycleTime = (60000 / bpm) * 2;
+  float barCycleTime = ((60000 / bpm) * (tweakBPM) / 8); // tweak at 4 look good
 
-  if (currentTime % 4 == 0) {
-    int m = random(0, 71);
+  if (currentTime % (uint8_t)(16 / tweakQuantity) == 0) { // tweak at 1 looks good
+    int m = random(0, NUM_VERTICAL_STRIPS - 1);
     if (rainPosition[m] == 0) {
       rainPosition[m] = currentTime;
     }
@@ -323,7 +363,7 @@ void myMatrixRain(long currentTime, long startAnimationTime) {
     if (rainPosition[i] != 0) {
       uint8_t outOfOne = (uint8_t)((((currentTime - rainPosition[i]) % (uint32_t)barCycleTime)) / barCycleTime);
       uint8_t k = (uint8_t)((((currentTime - rainPosition[i]) % (uint32_t)barCycleTime) * ledMappingVertical[i].numbersOfLeds) / barCycleTime);
-      uint8_t j = (uint8_t) ((rainPosition[i] + k * 6) % 255);
+      uint8_t j = (uint8_t) ((rainPosition[i] + ((k * tweakColor) / 4)) % 255);
       if (!ledMappingVertical[i].isGoingUp) {
         leds[ledMappingVertical[i].pwmChannel][k + ledMappingVertical[i].indexInPwm] = CRGB(Wheel(j));
       } else {
