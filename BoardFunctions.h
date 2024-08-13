@@ -16,8 +16,7 @@ void readBatteryVoltage() {
 
 void updateBrightness() {
   int potValue = analogRead(POT_PIN);
-  uint8_t brightnessValue = mapPotValueToBrightness(potValue);
-  FastLED.setBrightness(brightnessValue);
+  brightness = mapPotValueToBrightness(potValue);
 }
 
 int mapPotValueToBrightness(int potValue) {

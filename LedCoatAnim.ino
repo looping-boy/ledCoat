@@ -16,6 +16,7 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, D8>(leds[2], 477);
   FastLED.addLeds<NEOPIXEL, D9>(leds[3], 477);
   FastLED.addLeds<NEOPIXEL, D10>(leds[0], 451);
+  FastLED.setBrightness(MAX_BRIGHTNESS);
   updateBrightness();
 
   // ------------- ESP NOW ---------------
@@ -41,7 +42,6 @@ void loop() {
   //readBatteryVoltage();
   updateBrightness();
 
-  
   if (patternOld != pattern) {
     FastLED.clear();
     patternOld = pattern;

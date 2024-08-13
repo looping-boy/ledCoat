@@ -23,6 +23,20 @@
 #define PIN_TOUCH_INT 16
 #define PIN_TOUCH_RES 21
 
+// Constants
+#define STICKY_BAR_HEIGHT 40
+#define SPACE_BETWEEN_SWITCH 100
+#define BUTTON_SIZE 40
+#define BIG_BUTTON_SIZE 90
+const int STICKY_BAR_COLOR = TFT_BLACK;
+
+// Define the scrollable area
+#define VIRTUAL_WIDTH 210   // Adjusted to include sticky bar and screen width
+#define VIRTUAL_HEIGHT 480  // Larger than the screen height
+#define SCREEN_HEIGHT 170
+#define SCREEN_WIDTH 320
+
+
 #define TOUCH_MODULES_CST_SELF
 #include "Arduino.h"
 #include "TFT_eSPI.h" /* Please use the TFT library provided in the library. */
@@ -34,13 +48,6 @@ TouchLib touch(Wire, PIN_IIC_SDA, PIN_IIC_SCL, CTS820_SLAVE_ADDRESS, PIN_TOUCH_R
 
 TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite sprite = TFT_eSprite(&tft);
-
-// Constants
-const int STICKY_BAR_HEIGHT = 40;
-const int SPACE_BETWEEN_SWITCH = 100;
-const int STICKY_BAR_COLOR = TFT_BLACK;
-const int BUTTON_SIZE = 40;
-const int BIG_BUTTON_SIZE = 90;
 
 // Scroll offset
 int view1scrollY = 0;
@@ -54,11 +61,13 @@ bool switch4 = true;
 bool switch5 = false;
 bool switch6 = true;
 
-// Define the scrollable area
-const int VIRTUAL_WIDTH = 210;   // Adjusted to include sticky bar and screen width
-const int VIRTUAL_HEIGHT = 480;  // Larger than the screen height
-const int SCREEN_HEIGHT = 170;
-const int SCREEN_WIDTH = 320;
+// Tweak view
+uint8_t tweak1 = 4;
+uint8_t tweak2 = 4;
+uint8_t tweak3 = 4;
+uint8_t tweak4 = 1;
+uint8_t tweak5 = 1;
+uint8_t tweak6 = 1;
 
 // Velocity
 float velocityY = 0;

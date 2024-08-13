@@ -4,6 +4,7 @@
 #include "ColorView.h"
 #include "SwitchView.h"
 #include "BPMView.h"
+#include "TweakView.h"
 #include "ESPSender.h"
 
 unsigned long lastTouchTime = 0;
@@ -33,8 +34,6 @@ void setup() {
   sprite.setTextColor(TFT_WHITE,TFT_BLACK);
   Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
   draw(activeButton);
-
-  
 
   // STOP SCREEN PREP
   pinMode(PIN_LCD_BL, OUTPUT);
@@ -69,7 +68,7 @@ void draw(int page)
       drawSwitchesView();
       break;
     case 2:
-      drawTextView();
+      drawTweakView();
       break;
     case 3:
       drawColorPickerView(cursorPosition);
@@ -195,12 +194,6 @@ void loop() {
 // }
 
 
-void drawTextView() {
-  sprite.setTextColor(TFT_WHITE);
-  sprite.setTextSize(2);
-  sprite.drawString("This is a text view", STICKY_BAR_HEIGHT + 10, SCREEN_WIDTH / 2 - 10);
-}
-
 
 void handleUnTouch(int x, int y) {
 
@@ -230,30 +223,56 @@ void handleUnTouch(int x, int y) {
       if (virtualY >= 20 && virtualY < 20 + 80) {
         if (virtualX >= STICKY_BAR_HEIGHT + 30 && virtualX < STICKY_BAR_HEIGHT + 30 + 30) {
           switch1 = !switch1;
-          //redrawView1();
+          redrawView1();
         } else if (virtualX >= STICKY_BAR_HEIGHT + 30 + 60 && virtualX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
           switch4 = !switch4;
-          //redrawView1();
+          redrawView1();
         }
       } else if (virtualY >= SPACE_BETWEEN_SWITCH + 20 && virtualY < SPACE_BETWEEN_SWITCH + 20 + 80) {
         if (virtualX >= STICKY_BAR_HEIGHT + 30 && virtualX < STICKY_BAR_HEIGHT + 30 + 30) {
           switch2 = !switch2;
-          //redrawView1();
+          redrawView1();
         } else if (virtualX >= STICKY_BAR_HEIGHT + 30 + 60 && virtualX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
           switch5 = !switch5;
-          //redrawView1();
+          redrawView1();
         }
       } else if (virtualY >= SPACE_BETWEEN_SWITCH * 2 + 20 && virtualY < SPACE_BETWEEN_SWITCH * 2 + 20 + 80) {
         if (virtualX >= STICKY_BAR_HEIGHT + 30 && virtualX < STICKY_BAR_HEIGHT + 30 + 30) {
           switch3 = !switch3;
-          //redrawView1();
+          redrawView1();
         } else if (virtualX >= STICKY_BAR_HEIGHT + 30 + 60 && virtualX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
           switch6 = !switch6;
-          //redrawView1();
+          redrawView1();
         }
       }
     } else if (activeButton == 2) {  // VIEW 2
-
+      if (transformedY >= 20 && transformedY < 20 + 80) {
+        if (transformedX >= STICKY_BAR_HEIGHT + 30 && transformedX < STICKY_BAR_HEIGHT + 30 + 30) {
+          tweak1 = (tweak1 % 7) + 1;
+          sendValue(MESSAGE_TWEAK_QUANTITY, (uint8_t) pow(2, tweak1));
+          drawTweakView();
+        } else if (transformedX >= STICKY_BAR_HEIGHT + 30 + 60 && transformedX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
+          tweak4 = (tweak4 % 7) + 1;
+          sendValue(MESSAGE_TWEAK_PHASE, (uint8_t) tweak4);
+          drawTweakView();
+        }
+      } else if (transformedY >= SPACE_BETWEEN_SWITCH + 20 && transformedY < SPACE_BETWEEN_SWITCH + 20 + 80) {
+        if (transformedX >= STICKY_BAR_HEIGHT + 30 && transformedX < STICKY_BAR_HEIGHT + 30 + 30) {
+          tweak2 = (tweak2 % 7) + 1;
+          sendValue(MESSAGE_TWEAK_BPM, (uint8_t) pow(2, tweak2));
+          drawTweakView();
+        } else if (transformedX >= STICKY_BAR_HEIGHT + 30 + 60 && transformedX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
+          // Nothing yet
+        }
+      } else if (transformedY >= SPACE_BETWEEN_SWITCH * 2 + 20 && transformedY < SPACE_BETWEEN_SWITCH * 2 + 20 + 80) {
+        if (transformedX >= STICKY_BAR_HEIGHT + 30 && transformedX < STICKY_BAR_HEIGHT + 30 + 30) {
+          tweak3 = (tweak3 % 7) + 1;
+          sendValue(MESSAGE_TWEAK_COLOR, (uint8_t) pow(2, tweak3));
+          drawTweakView();
+        } else if (transformedX >= STICKY_BAR_HEIGHT + 30 + 60 && transformedX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
+          // Nothing yet
+        }
+      }
     } else if (activeButton == 3) {  // VIEW 3
       handleColorTabClick(transformedX, transformedY);
     } else if (activeButton == 4) {  // VIEW 3
