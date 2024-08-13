@@ -23,7 +23,6 @@ const int DOWN_TEXT_Y_OFFSET    = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SP
 const int DOWN_BUTTONS_Y_OFFSET = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SPACE + TEXT_HEIGHT;
 
 uint8_t selectedAnim = EASY;
-const uint8_t TYPE_PATTERN = 2;
 
 
 void drawColorBar();
@@ -312,19 +311,19 @@ void handleColorTabClick(int x, int y) {
     } else if (x >= DOWN_BUTTONS_Y_OFFSET && x < DOWN_BUTTONS_Y_OFFSET + BUTTON_SIZE) {
       if (y >= M_20 && y < M_20 + BUTTON_SIZE) {
         selectedAnim = EASY;
-        sendValue(TYPE_PATTERN, EASY);
+        sendValue(MESSAGE_TYPE_PATTERN, EASY);
       } else if (y >= M_20 + (BUTTON_SIZE + SPACE) && y < M_20 + SPACE + BUTTON_SIZE * 2) {
         selectedAnim = ALERT;
-        sendValue(TYPE_PATTERN, ALERT);
+        sendValue(MESSAGE_TYPE_PATTERN, ALERT);
       } else if (y >= M_20 + (BUTTON_SIZE + SPACE) * 2 && y < M_20 + SPACE * 2 + BUTTON_SIZE * 3) {
         selectedAnim = SWEEP_VERTICAL_BAR;
-        sendValue(TYPE_PATTERN, SWEEP_VERTICAL_BAR);
+        sendValue(MESSAGE_TYPE_PATTERN, SWEEP_VERTICAL_BAR);
       } else if (y >= M_20 + (BUTTON_SIZE + SPACE) * 3 && y < M_20 + SPACE * 3 + BUTTON_SIZE * 4) {
         selectedAnim = SWEEP_HORIZONTAL_BAR;
-        sendValue(TYPE_PATTERN, SWEEP_HORIZONTAL_BAR);
+        sendValue(MESSAGE_TYPE_PATTERN, SWEEP_HORIZONTAL_BAR);
       } else if (y >= M_20 + (BUTTON_SIZE + SPACE) * 4 && y < M_20 + SPACE * 4 + BUTTON_SIZE * 5) {
         selectedAnim = SWEEP_DIAGONAL_BAR;
-        sendValue(TYPE_PATTERN, SWEEP_DIAGONAL_BAR);
+        sendValue(MESSAGE_TYPE_PATTERN, SWEEP_DIAGONAL_BAR);
       }
     }
   } 

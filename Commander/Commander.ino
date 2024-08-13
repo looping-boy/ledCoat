@@ -110,7 +110,7 @@ void loop() {
     if (currentTime - beatMillis >= intervalBPM) {
       beatMillis = currentTime;
       x++;
-      uint8_t messageType = 2;
+      uint8_t messageType = MESSAGE_TYPE_PATTERN;
       sendValue(messageType, x % 4 + 1);
       delay(2);
     }

@@ -316,6 +316,7 @@ void processInputs() {
         tapModeActive = 0;
         lastTap = tapTimes[3];
         drawBPM(bpm);
+        sendValue(MESSAGE_TYPE_BPM, bpm);
         //Serial.println((String) "updated bpm to " + bpm);
       }
       return;
@@ -325,6 +326,7 @@ void processInputs() {
       addInterval(t - lastTap);
       setBPMFromIntervals();
       drawBPM(bpm);
+      sendValue(MESSAGE_TYPE_BPM, bpm);
       lastTap = t;
     }
     if (leftButtonJustPressed) {

@@ -23,6 +23,9 @@ uint8_t broadcastAddresses[][6] = {
 // Set the WiFi channel
 #define WIFI_CHANNEL 3
 
+const uint8_t MESSAGE_TYPE_PATTERN = 2;
+const uint8_t MESSAGE_TYPE_BPM = 1;
+
 // void data_sent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 //   Serial.print("\r\nStatus of Last Message Sent:\t");
 //   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");

@@ -9,6 +9,7 @@
 #define BATTERY_PIN D1
 
 uint8_t brightness = 20;
+uint8_t originalBrightness = 20;
 uint32_t color = 255; // Blue
 CRGB leds[NUM_STRIPS][500];
 
@@ -37,7 +38,15 @@ CRGB leds[NUM_STRIPS][500];
 #define WARNING 9
 
 uint8_t pattern = 1;
+uint8_t patternOld = 0;
 uint8_t bpm = 120;
+bool pulseDone = false; 
+bool fading = false;
+uint8_t fadeStep = 0;
+long bpmUpdateTime = 0;
+long startAnimationTime = millis();
+uint16_t hue = 200;
+
 
 
 long time1,time2,time3; // For TIME LOGS

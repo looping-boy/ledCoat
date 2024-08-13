@@ -6,6 +6,9 @@
 #include <WiFi.h>
 #include <esp_wifi.h>
 
+const uint8_t MESSAGE_TYPE_PATTERN = 2;
+const uint8_t MESSAGE_TYPE_BPM = 1;
+
 typedef struct Message {
   uint8_t message_type;  // 0: brightness, 1: bpm, 2: pattern, 3: define light device 4: RGBColor
   uint8_t value;          // For brightness, BPM, pattern, or define light device
@@ -31,10 +34,10 @@ Serial.println(len);
     case 0:  // Brightness
       brightness = message.value;
       break;
-    case 1:  // BPM
+    case MESSAGE_TYPE_BPM:  // BPM
       bpm = message.value;
       break;
-    case 2:  // Pattern
+    case MESSAGE_TYPE_PATTERN:  // Pattern
       pattern = message.value;
       break;
     case 3:  // Define light device

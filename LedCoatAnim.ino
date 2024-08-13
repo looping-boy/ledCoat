@@ -36,26 +36,37 @@ void loop() {
   //readBatteryVoltage();
   updateBrightness();
 
+  
+  if (patternOld != pattern) {
+    FastLED.clear();
+    patternOld = pattern;
+    pulseDone = false; 
+    fading = false;
+    fadeStep = 0;
+    startAnimationTime = millis();
+  }
+
+  unsigned long currentTime = millis();
+
   switch (pattern) {
     case 0:
       allWhiteStep(CRGB::Blue);
       break;
     case 1:
-      allWhiteStep(CRGB::Red);
+      alertBPM(currentTime);
       break;
     case 2:
-      allWhiteStep(CRGB::Yellow);
+      sparkle();
       break;
     case 3:
-      allWhiteStep(CRGB::Purple);
+      colorfulSparkle();
       break;
     case 4:
-      allWhiteStep(CRGB::Green);
+      bigTempoPulse2(currentTime, startAnimationTime);
       break;
   }
-  
-  FastLED.show();
 
+  
 }
 
 
