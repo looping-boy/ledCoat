@@ -5,6 +5,7 @@
 
 uint32_t Wheel(byte WheelPos);
 uint32_t rgbToUint32(uint8_t red, uint8_t green, uint8_t blue);
+void fadeToBlackByIndex(CRGB* leds, int num_leds, uint8_t fadeBy);
 
 void breathingSmall() {
   for (uint16_t j = 0; j < 256; j++) {
@@ -76,7 +77,7 @@ void fadeToBlackBy(CRGB* leds, int num_leds, uint8_t fadeBy) {
   }
 }
 
-void bigTempoPulse2(long currentTime, long startAnimationTime) {
+void bigTempoPulse(long currentTime, long startAnimationTime) {
   float barCycleTime = (60000 / bpm) / 2;
   uint8_t j = (uint8_t)((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255) / barCycleTime);
   CHSV colorHSV = CHSV(hue, 255, 255 - j);
@@ -95,6 +96,41 @@ void bigTempoPulse2(long currentTime, long startAnimationTime) {
     }
 
     FastLED.show();
+
+    if (j >= 230) {
+      pulseDone = true;  // Mark the pulse as done
+      FastLED.setBrightness(originalBrightness);
+    }
+  }
+}
+
+void gradientPulse(long currentTime, long startAnimationTime) {
+  float barCycleTime = (60000 / bpm) / 2;
+  uint8_t j = (uint8_t)((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255) / barCycleTime);
+
+  // Calculate brightness level based on pulse progress
+  uint8_t brightnessLevel = 255 - j;
+
+  // Gradient colors based on the position
+  for (uint16_t i = 0; i < 451; i++) {
+    uint8_t gradientHue = hue + (i * 255 / 451);  // Spread hue over the LED strip
+    CHSV colorHSV = CHSV(gradientHue, 255, brightnessLevel);
+    leds[0][i] = colorHSV;
+    leds[1][i] = colorHSV;
+  }
+
+  for (uint16_t i = 0; i < 477; i++) {
+    uint8_t gradientHue = hue + (i * 255 / 477);  // Spread hue over the LED strip
+    CHSV colorHSV = CHSV(gradientHue, 255, brightnessLevel);
+    leds[2][i] = colorHSV;
+    leds[3][i] = colorHSV;
+  }
+
+  FastLED.show();
+
+  if (!pulseDone) {
+    originalBrightness = FastLED.getBrightness();
+    FastLED.setBrightness(MAX_BRIGHTNESS);
 
     if (j >= 230) {
       pulseDone = true;  // Mark the pulse as done
@@ -247,31 +283,127 @@ void circleRainbowCycle(uint8_t loop) {
   }
 }
 
-void rainbowCycle(uint8_t wait) {
-  for (uint16_t j = 0; j < 256; j++) {
-    time1 = ESP.getCycleCount();
-    uint16_t pwm1Index = 220;
-    uint16_t pwm2Index = 0;
-    uint16_t pwm3Index = 0;
-    uint16_t pwm4Index = 0;
-    int l = 0;
-    for (uint16_t i = 0; i < 72; i++) {
-      if (!ledMappingVertical[i].isGoingUp) {
-        for (int k = 0; k < ledMappingVertical[i].numbersOfLeds; k++) {
-          leds[ledMappingVertical[i].pwmChannel][k + ledMappingVertical[i].indexInPwm] = CRGB(Wheel((((ledMappingVertical[i].indexTotal + k) * 256 / SIZE_ANIM) + j) & 255));
-        }
-      } else {
-        for (int k = ledMappingVertical[i].numbersOfLeds - 1; k >= 0; k--) {
-          leds[ledMappingVertical[i].pwmChannel][k + ledMappingVertical[i].indexInPwm] = CRGB(Wheel((((ledMappingVertical[i].indexTotal - k + ledMappingVertical[i].numbersOfLeds - 1) * 256 / SIZE_ANIM) + j) & 255));
-        }
+// The first one anim
+void rainbowCycle(long currentTime, long startAnimationTime) {
+  float barCycleTime = (60000 / bpm) / 16;
+  uint8_t j = (uint8_t)((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255) / barCycleTime);
+  int l = 0;
+  for (uint16_t i = 0; i < 72; i++) {
+    if (!ledMappingVertical[i].isGoingUp) {
+      for (int k = 0; k < ledMappingVertical[i].numbersOfLeds; k++) {
+        leds[ledMappingVertical[i].pwmChannel][k + ledMappingVertical[i].indexInPwm] = CRGB(Wheel((((ledMappingVertical[i].indexTotal + k) * 256 / SIZE_ANIM) + j) & 255));
+      }
+    } else {
+      for (int k = ledMappingVertical[i].numbersOfLeds - 1; k >= 0; k--) {
+        leds[ledMappingVertical[i].pwmChannel][k + ledMappingVertical[i].indexInPwm] = CRGB(Wheel((((ledMappingVertical[i].indexTotal - k + ledMappingVertical[i].numbersOfLeds - 1) * 256 / SIZE_ANIM) + j) & 255));
       }
     }
-    FastLED.show();
-    time3 = ESP.getCycleCount();
-    Serial.printf("Calcul pixel Total fps:%.2f \n", (float)240000000 / (time3 - time1));
-    delay(wait);
   }
+  FastLED.show();
 }
+
+// The first one anim
+void myMatrixRain(long currentTime, long startAnimationTime) {
+
+  fadeToBlackBy(leds[0], 451, 40);
+  fadeToBlackBy(leds[1], 451, 40);
+  fadeToBlackBy(leds[2], 477, 40);
+  fadeToBlackBy(leds[3], 477, 40);
+
+  float barCycleTime = (60000 / bpm) * 2;
+
+  if (currentTime % 4 == 0) {
+    int m = random(0, 71);
+    if (rainPosition[m] == 0) {
+      rainPosition[m] = currentTime;
+    }
+  }
+
+  for (int i = 0; i < NUM_VERTICAL_STRIPS; i++) {
+    if (rainPosition[i] != 0) {
+      uint8_t outOfOne = (uint8_t)((((currentTime - rainPosition[i]) % (uint32_t)barCycleTime)) / barCycleTime);
+      uint8_t k = (uint8_t)((((currentTime - rainPosition[i]) % (uint32_t)barCycleTime) * ledMappingVertical[i].numbersOfLeds) / barCycleTime);
+      uint8_t j = (uint8_t) ((rainPosition[i] + k * 6) % 255);
+      if (!ledMappingVertical[i].isGoingUp) {
+        leds[ledMappingVertical[i].pwmChannel][k + ledMappingVertical[i].indexInPwm] = CRGB(Wheel(j));
+      } else {
+        leds[ledMappingVertical[i].pwmChannel][ledMappingVertical[i].indexInPwm - k + ledMappingVertical[i].numbersOfLeds - 1] = CRGB(Wheel(j));
+      }
+      if (k >= ledMappingVertical[i].numbersOfLeds - 3) {
+        rainPosition[i] = 0;
+      }
+    }
+  }
+
+  FastLED.show();
+}
+
+void blueRain(long currentTime, long startAnimationTime) {
+  float barCycleTime = (60000 / bpm) / 16;
+  uint8_t j = (uint8_t)((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255) / barCycleTime);
+  int l = 0;
+
+  // Iterate over each vertical LED strip
+  for (uint16_t i = 0; i < 72; i++) {
+    // Determine if this strip should animate a droplet
+    bool shouldRain = random(0, 100) < 20;  // 20% chance for rain on this strip
+    if (shouldRain) {
+      int dropletPosition = random(0, ledMappingVertical[i].numbersOfLeds);  // Random position for the droplet
+      int dropletLength = random(1, 5);                                      // Random length of the droplet
+
+      // Create the droplet effect
+      for (int k = 0; k < dropletLength; k++) {
+        int ledIndex = dropletPosition + k;
+
+        if (ledIndex < ledMappingVertical[i].numbersOfLeds) {
+          CRGB color = CHSV(160, 255, 255 - (k * 50));  // Shades of blue with a gradient effect
+          leds[ledMappingVertical[i].pwmChannel][ledIndex + ledMappingVertical[i].indexInPwm] = color;
+        }
+      }
+    } else {
+      // Dim the LED strip if no rain on this strip
+      for (int k = 0; k < ledMappingVertical[i].numbersOfLeds; k++) {
+        leds[ledMappingVertical[i].pwmChannel][k + ledMappingVertical[i].indexInPwm].fadeToBlackBy(10);  // Gradually fade to black
+      }
+    }
+  }
+
+  FastLED.show();
+}
+
+void matrixRain(long currentTime, long startAnimationTime) {
+  float barCycleTime = (60000 / bpm) / 16;
+  uint8_t j = (uint8_t)((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255) / barCycleTime);
+
+  for (uint16_t i = 0; i < NUM_STRIPS; i++) {
+    // Create a trailing effect by fading all LEDs slightly
+    for (int k = 0; k < ledMappingVertical[i].numbersOfLeds; k++) {
+      leds[ledMappingVertical[i].pwmChannel][k + ledMappingVertical[i].indexInPwm].fadeToBlackBy(20);
+    }
+
+    // Draw the rain drop at the current position
+    leds[ledMappingVertical[i].pwmChannel][rainPosition[i] + ledMappingVertical[i].indexInPwm] = CRGB::Blue;
+
+    // Create a fading trail effect by lighting up the previous LEDs
+    for (int t = 1; t < 5; t++) {
+      int trailPos = rainPosition[i] - t;
+      if (trailPos >= 0) {
+        leds[ledMappingVertical[i].pwmChannel][trailPos + ledMappingVertical[i].indexInPwm] = CHSV(160, 255, 255 - (t * 50));  // Fading trail effect
+      }
+    }
+
+    // Move the rain drop down
+    rainPosition[i]++;
+
+    // If the rain drop reaches the bottom, reset it to the top
+    if (rainPosition[i] >= ledMappingVertical[i].numbersOfLeds) {
+      rainPosition[i] = 0;
+    }
+  }
+
+  FastLED.show();
+}
+
 
 uint32_t Wheel(byte WheelPos) {
   WheelPos = 255 - WheelPos;  // Reverse direction for smoother color transition

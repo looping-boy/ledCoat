@@ -29,6 +29,11 @@ void setup() {
   }
   
   esp_now_register_recv_cb(data_received);
+
+  // SETUP BLUE WATER ANIM
+  for (int i = 0; i < NUM_VERTICAL_STRIPS; i++) {
+    rainPosition[i] = 0;
+  }
 }
 
 
@@ -41,8 +46,6 @@ void loop() {
     FastLED.clear();
     patternOld = pattern;
     pulseDone = false; 
-    fading = false;
-    fadeStep = 0;
     startAnimationTime = millis();
   }
 
@@ -50,19 +53,19 @@ void loop() {
 
   switch (pattern) {
     case 0:
-      allWhiteStep(CRGB::Blue);
+      gradientPulse(currentTime, startAnimationTime);
       break;
     case 1:
-      alertBPM(currentTime);
+      myMatrixRain(currentTime, startAnimationTime);
       break;
     case 2:
-      sparkle();
+      rainbowCycle(currentTime, startAnimationTime);
       break;
     case 3:
       colorfulSparkle();
       break;
     case 4:
-      bigTempoPulse2(currentTime, startAnimationTime);
+      bigTempoPulse(currentTime, startAnimationTime);
       break;
   }
 

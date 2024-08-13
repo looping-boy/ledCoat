@@ -41,11 +41,15 @@ uint8_t pattern = 1;
 uint8_t patternOld = 0;
 uint8_t bpm = 120;
 bool pulseDone = false; 
-bool fading = false;
-uint8_t fadeStep = 0;
 long bpmUpdateTime = 0;
 long startAnimationTime = millis();
 uint16_t hue = 200;
+
+
+// SETUP BLUE WATER ANIM
+#define NUM_VERTICAL_STRIPS 72
+#define MAX_LEDS_PER_STRIP 100 // Adjust this to the maximum number of LEDs per strip
+long rainPosition[NUM_VERTICAL_STRIPS];
 
 
 
