@@ -46,6 +46,12 @@
 #define BIG_BUTTON_SIZE              90
 #define SMALL_BUTTON_SIZE            30
 const int STICKY_BAR_COLOR = TFT_BLACK;
+const int TEXT_HEIGHT = M_20;
+const int DOWN_TEXT_Y_OFFSET    = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SPACE;
+const int DOWN_BUTTONS_Y_OFFSET = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SPACE + TEXT_HEIGHT;
+const int OPACITY_Y_OFFSET      = DOWN_BUTTONS_Y_OFFSET + INSIDE_SIZE + SPACE;
+const int SECOND_LINE = TAB_HEIGHT + SPACE + SMALL_BUTTON_SIZE + SPACE;
+const int THIRD_LINE = SECOND_LINE + SMALL_BUTTON_SIZE + SPACE;
 
 // Define the scrollable area
 #define VIRTUAL_WIDTH 210   // Adjusted to include sticky bar and screen width

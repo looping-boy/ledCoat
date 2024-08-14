@@ -3,11 +3,6 @@
 
 #include "ESPSender.h"
 
-const int TEXT_HEIGHT = M_20;
-const int DOWN_TEXT_Y_OFFSET    = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SPACE;
-const int DOWN_BUTTONS_Y_OFFSET = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SPACE + TEXT_HEIGHT;
-const int OPACITY_Y_OFFSET      = DOWN_BUTTONS_Y_OFFSET + INSIDE_SIZE + SPACE;
-
 uint8_t selectedAnim = EASY;
 
 void drawForceBrightnessButton();
@@ -163,44 +158,5 @@ void handleColorTabClick(int x, int y) {
     drawColorPickerView();
   } 
 }
-
-int findSelectedColorInColorBar(int position) {
-  int r, g, b;
-
-  // Position goes to 280 max and min 0
-  // Normalize position to range [0, 1]
-  float normalizedPosition = (float)position / (TAB_WIDTH - 1);
-
-  // Determine the RGB values based on the normalized position
-  if (normalizedPosition < 1.0 / 6.0) {
-    r = 255;
-    g = (int)(255 * normalizedPosition * 6);
-    b = 0;
-  } else if (normalizedPosition < 2.0 / 6.0) {
-    r = (int)(255 - 255 * (normalizedPosition - 1.0 / 6.0) * 6);
-    g = 255;
-    b = 0;
-  } else if (normalizedPosition < 3.0 / 6.0) {
-    r = 0;
-    g = 255;
-    b = (int)(255 * (normalizedPosition - 2.0 / 6.0) * 6);
-  } else if (normalizedPosition < 4.0 / 6.0) {
-    r = 0;
-    g = (int)(255 - 255 * (normalizedPosition - 3.0 / 6.0) * 6);
-    b = 255;
-  } else if (normalizedPosition < 5.0 / 6.0) {
-    r = (int)(255 * (normalizedPosition - 4.0 / 6.0) * 6);
-    g = 0;
-    b = 255;
-  } else {
-    r = 255;
-    g = 0;
-    b = (int)(255 - 255 * (normalizedPosition - 5.0 / 6.0) * 6);
-  }
-
-  // Convert RGB to 16-bit color format
-  return tft.color565(r, g, b);
-}
-
 
 #endif 

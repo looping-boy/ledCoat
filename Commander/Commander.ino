@@ -1,5 +1,6 @@
 // #define TOUCH_MODULES_CST_SELF
 #include "Constant.h"
+#include "ColorUtils.h"
 #include "Tabs.h"
 #include "ColorView.h"
 #include "SwitchView.h"
@@ -20,7 +21,7 @@ uint8_t x = 0;
 unsigned long lastUpdateTime = 0;
 unsigned long touchStartTime = 0;
 
-void draw(int page, unsigned long currentTime = 0);
+void draw(int page);
 
 void setup() {
   // SCREEN PREP
@@ -54,7 +55,7 @@ void setup() {
 }
 
 
-void draw(int page, unsigned long currentTime) {
+void draw(int page) {
   activeButton = page;
   sprite.fillSprite(TFT_BLACK);
 
@@ -83,7 +84,7 @@ void draw(int page, unsigned long currentTime) {
       drawBPMView();
       break;
     case 5:
-      drawPatternView(currentTime);
+      drawPatternView();
       break;
     default:
       break;
@@ -113,16 +114,16 @@ void loop() {
     }
 
     // Anim pattern screen
-    if (activeButton == 5) {
-      drawSelectedColor();
-      drawAlertColorAnim(currentTime);
-      drawHorizontalBarColorAnim(currentTime);
-      drawVerticalBarColorAnim(currentTime);
-      drawDiagonalBarColorAnim(currentTime);
-      drawCircularBarColorAnim(currentTime);
-      drawCrossBarColorAnim(currentTime);
-      drawZigZagBarColorAnim(currentTime);
-    }
+    // if (activeButton == 5) {
+    //   drawSelectedColor();
+    //   drawAlertColorAnim();
+    //   drawHorizontalBarColorAnim();
+    //   drawVerticalBarColorAnim();
+    //   drawDiagonalBarColorAnim();
+    //   drawCircularBarColorAnim();
+    //   drawCrossBarColorAnim();
+    //   drawZigZagBarColorAnim();
+    // }
   }
 
   unsigned long intervalBPM = 60000 / bpmMain;  // Interval between beats in milliseconds
@@ -173,7 +174,7 @@ void handleUnTouch(int x, int y, unsigned long currentTime) {
     } else if (transformedY >= (BUTTON_SIZE + SPACE) * 3 && transformedY < (BUTTON_SIZE + SPACE) * 3 + BUTTON_SIZE) {
       (activeButton == 4) ? null() : draw(4);
     } else if (transformedY >= (BUTTON_SIZE + SPACE) * 4 && transformedY < (BUTTON_SIZE + SPACE) * 4 + BUTTON_SIZE) {
-      (activeButton == 5) ? null() : draw(5, currentTime);
+      (activeButton == 5) ? null() : draw(5);
     }
   }
   // VIEWS
