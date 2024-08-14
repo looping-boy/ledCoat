@@ -38,9 +38,36 @@ void setup() {
 }
 
 
+#define FULL 1
+#define FULL_VERTICAL 2
+#define FULL_HORIZONTAL 3
+#define FULL_DIAGONAL 4
+#define FULL_CIRCLE 5
+#define FULL_TRIANGLE 6
+#define FULL_ALARM 7
+
+#define RAIN_CHOOSE_HUE 8
+#define PULSE_CHOOSE_HUE_1 9
+#define PULSE_CHOOSE_HUE_2 10
+#define RAIN_COLORFULL 11
+#define RAIN_COLORFULL_BEAT 12
+#define LINE_HORIZONTAL_UP 13
+#define LINE_HORIZONTAL_DOWN 14
+#define LINE_HORIZONTAL_UP_DOWN 15
+#define SPARKLE_WHITE 16
+#define SPARKLE_COLOR 17
+#define SPARKLE_COLOR_BEAT 18
+
+#define GIF_PONG 19
+#define GIF_SPIRAL 20
+#define SPIRAL 21
+#define WARNING 22
+
 void loop() {
   //readBatteryVoltage();
-  updateBrightness();
+  if (!isForcedBrightness) {
+    updateBrightness();
+  }
 
   if (patternOld != pattern) {
     FastLED.clear();

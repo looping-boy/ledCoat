@@ -24,20 +24,20 @@ uint8_t broadcastAddresses[][6] = {
 #define WIFI_CHANNEL 3
 
 const uint8_t MESSAGE_TYPE_BRIGHTNESS = 0;
-const uint8_t MESSAGE_TYPE_BPM = 1;
-const uint8_t MESSAGE_TYPE_PATTERN = 2;
-const uint8_t MESSAGE_TYPE_LIGHT_DEVICE = 3;
-const uint8_t MESSAGE_TYPE_HUE = 4;
+const uint8_t MESSAGE_TYPE_HUE = 1;
+const uint8_t MESSAGE_TYPE_BPM = 2;
+const uint8_t MESSAGE_TYPE_PATTERN = 3;
+const uint8_t MESSAGE_TYPE_LIGHT_DEVICE = 4;
+const uint8_t MESSAGE_TYPE_FORCE_BRIGHTNESS = 5; 
 
-const uint8_t MESSAGE_TWEAK_QUANTITY = 5;
-const uint8_t MESSAGE_TWEAK_BPM = 6;    
-const uint8_t MESSAGE_TWEAK_COLOR = 7;     
-const uint8_t MESSAGE_TWEAK_PHASE = 8;  
+const uint8_t MESSAGE_TWEAK_QUANTITY = 6;
+const uint8_t MESSAGE_TWEAK_BPM = 7;    
+const uint8_t MESSAGE_TWEAK_COLOR = 8;     
+const uint8_t MESSAGE_TWEAK_PHASE = 9;  
 
 typedef struct Message {
-  uint8_t message_type;  // 0: brightness, 1: bpm, 2: pattern, 3: define light device 4: RGBColor
-  uint8_t value;          // For brightness, BPM, pattern, or define light device
-  uint16_t hue;     // For RGBColor (4 bytes)
+  uint8_t message_type;   
+  uint8_t value;          
 } Message;
 
 Message message;
@@ -69,13 +69,14 @@ void setupESP() {
   }
 }
 
-void sendValue(uint8_t messageType, uint8_t value, uint16_t hue = 0) {
+void sendValue(uint8_t messageType, uint8_t value) {
   Message message;
 
   message.message_type = messageType;
 
   switch (messageType) {
     case MESSAGE_TYPE_BRIGHTNESS:     // Brightness
+    case MESSAGE_TYPE_HUE:            // Send HSV hue
     case MESSAGE_TYPE_BPM:            // BPM
     case MESSAGE_TYPE_PATTERN:        // Pattern
     case MESSAGE_TYPE_LIGHT_DEVICE:   // Define Light Device: Foot, Wrist, Coat, or HeadBand
@@ -83,13 +84,9 @@ void sendValue(uint8_t messageType, uint8_t value, uint16_t hue = 0) {
     case MESSAGE_TWEAK_BPM:           // Tweak BPM
     case MESSAGE_TWEAK_COLOR:         // Tweak Color
     case MESSAGE_TWEAK_PHASE:         // Tweak Phase
-      message.value = value;
-      message.hue = 0;                // Not used here
-      break;
-    case MESSAGE_TYPE_HUE:            // HSV Hue
-      message.value = 0;              // Not used here
-      message.hue = hue;              // 0 to 360
-      break;
+    case MESSAGE_TYPE_FORCE_BRIGHTNESS:
+      message.value = value;    // Not used here
+      break;   
     default:
       return;
   }

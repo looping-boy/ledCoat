@@ -77,10 +77,13 @@ int lastTouchY = -1;
 // Variables for touch handling
 bool touchActive = false;
 int cursorPosition = 150;  // Position of the cursor on the bar
+int opacityPosition = 50;
 
 // State value
-int colorSelected = 0;
-boolean isBPMMode = false;
+uint8_t hueSelected = 150;
+uint8_t opacitySelected = 20;
+bool isForcedBrightness = false;
+bool isBPMMode = false;
 uint8_t activeButton = 3;
 
 // Anim values

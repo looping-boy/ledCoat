@@ -42,7 +42,7 @@ void setup() {
   setupESP();
 
   // INIT
-  colorSelected = findSelectedColorInColorBar(cursorPosition);
+  hueSelected = findSelectedHueInColorBar(cursorPosition);
   //draw(activeButton);
   lastTouchTime = millis();  // Initialize last touch time
 }
@@ -71,7 +71,7 @@ void draw(int page)
       drawTweakView();
       break;
     case 3:
-      drawColorPickerView(cursorPosition);
+      drawColorPickerView();
       break;
     case 4:
       drawBPMView();
@@ -91,18 +91,15 @@ void loop() {
   if (activeButton == 3) {
     if (currentTime - UIMillis >= intervalUI) {
       UIMillis = currentTime;
-      drawSelectedColor(cursorPosition);
-      drawAlertColorAnim(cursorPosition, currentTime);
-      drawHorizontalBarColorAnim(cursorPosition, currentTime);
-      drawVerticalBarColorAnim(cursorPosition, currentTime);
-      drawDiagonalBarColorAnim(cursorPosition, currentTime);
+      // drawSelectedColor(cursorPosition);
+      // drawAlertColorAnim(cursorPosition, currentTime);
+      // drawHorizontalBarColorAnim(cursorPosition, currentTime);
+      // drawVerticalBarColorAnim(cursorPosition, currentTime);
+      // drawDiagonalBarColorAnim(cursorPosition, currentTime);
     }
-    //drawMultiColorAnim(cursorPosition, currentTime);
-    //delay(15);
   }
 
   unsigned long intervalBPM = 60000 / bpmMain;  // Interval between beats in milliseconds
-  //srand(time(NULL)); // Seed the random number generator
 
   // Check if the current time has passed the interval time
   if (isBPMMode) {
@@ -124,76 +121,10 @@ void loop() {
       //draw(t.x,t.y);
     } 
   } else {
-    delay(20);
-    //TP_Point t = touch.getPoint(0);
-    // if(t.x<170)
-    // handleUnTouch(t.x, t.y);
+    //delay(20);
     deb=0;
   }
 }
-
-// void setup() {
-//     //The two buttons on the board (setup but not used in this sketch)
-//   pinMode(PIN_BUTTON_1, INPUT);
-//   pinMode(PIN_BUTTON_2, INPUT);
-
-//   pinMode(PIN_POWER_ON, OUTPUT);
-//   digitalWrite(PIN_POWER_ON, HIGH);
-
-//   pinMode(PIN_TOUCH_RES, OUTPUT);
-//   digitalWrite(PIN_TOUCH_RES, LOW);
-//   delay(500);
-//   digitalWrite(PIN_TOUCH_RES, HIGH);
-  
-//   tft.init(); 
-//   tft.begin();
-//   setupESP();
-//   tft.setRotation(1);
-//   sprite.createSprite(320, 170);
-//   sprite.setTextColor(TFT_WHITE);
-//   Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
-//   colorSelected = findSelectedColorInColorBar(cursorPosition);
-//   draw(activeButton);
-//   pinMode(PIN_LCD_BL, OUTPUT);
-//   lastTouchTime = millis();  // Initialize last touch time
-//   touch.init();
-// }
-
-// void draw(uint8_t page) {
-//   activeButton = page;
-//   sprite.fillSprite(TFT_BLACK);
-
-//   // Draw the sticky bar
-//   sprite.fillRect(0, 0, SCREEN_WIDTH, STICKY_BAR_HEIGHT, STICKY_BAR_COLOR);
-
-//   // Draw buttons on the sticky bar
-//   drawButton(0, 0, "B1", 1);
-//   drawButton(50, 0, "B2", 2);
-//   drawButton(100, 0, "B3", 3);
-//   drawButton(150, 0, "B4", 4);
-
-//   // Draw different views based on the active button
-//   switch (activeButton) {
-//     case 1:
-//       drawSwitchesView();
-//       break;
-//     case 2:
-//       drawTextView();
-//       break;
-//     case 3:
-//       drawColorPickerView(cursorPosition);
-//       break;
-//     case 4:
-//       drawBPMView();
-//       break;
-//     default:
-//       break;
-//   }
-
-//   sprite.pushSprite(0, 0);
-// }
-
-
 
 void handleUnTouch(int x, int y) {
 

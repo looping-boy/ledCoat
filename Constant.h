@@ -54,6 +54,8 @@ uint8_t tweakQuantity = 16;   // just go until 128
 uint8_t tweakBPM = 16;       // just go until 128
 uint8_t tweakColor = 16;     // just go until 128
 uint8_t tweakPhase = 1;      // From 1 to 8 only
+bool isForcedBrightness = false;
+uint8_t forcedBrightness = 0;
 
 long time1,time2,time3; // For TIME LOGS
 

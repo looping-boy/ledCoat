@@ -13,40 +13,97 @@
 #define TAB_HEIGHT                   40
 #define INSIDE_SIZE                  36
 #define COLOR_BAR_HEIGHT             20
+#define OPACITY_BAR_HEIGHT           20
 #define COLOR_BAR_COMPONENTS         40
+#define OPACITY_BAR_COMPONENTS       40
 #define M_20                         20
 #define M_40                         40
 #define GAP                          2
 #define SPACE                        10
+#define OPACITY_BAR_SHORTER          70
+#define FORCE_BUTTON_WIDTH           60
+#define FORCE_BUTTON_HEIGHT          30
 
 const int TEXT_HEIGHT = M_20;
 const int DOWN_TEXT_Y_OFFSET    = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SPACE;
 const int DOWN_BUTTONS_Y_OFFSET = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SPACE + TEXT_HEIGHT;
+const int OPACITY_Y_OFFSET      = DOWN_BUTTONS_Y_OFFSET + INSIDE_SIZE + SPACE;
 
 uint8_t selectedAnim = EASY;
 
+void drawForceBrightnessButton();
 void drawColorBar();
-void drawSelectedColor(int position);
+void drawOpacityBar();
 void drawCursor(int x);
+void drawOpacityCursor(int x);
 uint16_t hueToRGB565(float hue);
+uint16_t getOpacityColor(uint16_t color, float opacity);
 
-void drawColorPickerView(int cursorPosition) {
-  sprite.fillRect(20, 50, TAB_WIDTH, COLOR_BAR_COMPONENTS, TFT_BLACK);  // Top and left
+void drawColorPickerView() {
   drawColorBar();
+  drawOpacityBar();
   drawCursor(cursorPosition);
-  drawSelectedColor(cursorPosition);
+  drawOpacityCursor(opacityPosition);
+  drawForceBrightnessButton();
+  sprite.pushSprite(0, 0);
 }
 
 void drawColorBar() {
+  sprite.fillRect(M_20, TAB_HEIGHT + SPACE + TEXT_HEIGHT, TAB_WIDTH, COLOR_BAR_COMPONENTS, TFT_BLACK); 
   for (int i = 0; i < TAB_WIDTH - 4; i++) {
-    float hue = (float)i / (TAB_WIDTH - 1);  // Normalize i to range [0, 1]
+    float hue = (float)i / (TAB_WIDTH - 1);
     uint16_t color = hueToRGB565(hue);
     sprite.drawLine(i + M_20 + GAP, TAB_HEIGHT + SPACE + TEXT_HEIGHT + GAP, i + M_20 + GAP, TAB_HEIGHT + SPACE + TEXT_HEIGHT + COLOR_BAR_HEIGHT - GAP - 1, color);
   }
   sprite.setTextColor(TFT_WHITE);
   sprite.drawString("COLOR PICKER", M_20, TAB_HEIGHT + SPACE, 2);
+
+  char hueStr[4];
+  sprintf(hueStr, "%d", hueSelected);
+  sprite.fillRect(TAB_WIDTH + SPACE - 24, TAB_HEIGHT + SPACE, 34, TEXT_HEIGHT - 3, TFT_WHITE);
+  sprite.setTextColor(TFT_BLACK);
+  sprite.drawString(hueStr, TAB_WIDTH + SPACE - sprite.textWidth(hueStr), TAB_HEIGHT + SPACE, 2);
+
   // Draw the white border around the color bar
-  sprite.drawRect(M_20, TAB_HEIGHT + SPACE + TEXT_HEIGHT, TAB_WIDTH, COLOR_BAR_HEIGHT, TFT_WHITE);  // Top and left
+  sprite.drawRect(M_20, TAB_HEIGHT + SPACE + TEXT_HEIGHT, TAB_WIDTH, COLOR_BAR_HEIGHT, TFT_WHITE);
+}
+
+void drawOpacityBar() {
+  sprite.fillRect(M_20, DOWN_BUTTONS_Y_OFFSET, TAB_WIDTH - OPACITY_BAR_SHORTER, OPACITY_BAR_HEIGHT, TFT_BLACK);
+  for (int i = 0; i < TAB_WIDTH - OPACITY_BAR_SHORTER - 4 ; i++) {
+    float opacity = (float)i / (TAB_WIDTH - 1);
+    uint16_t color = getOpacityColor(TFT_WHITE, opacity);
+    sprite.drawLine(i + M_20 + GAP, DOWN_BUTTONS_Y_OFFSET + GAP, i + M_20 + GAP, DOWN_BUTTONS_Y_OFFSET + COLOR_BAR_HEIGHT - GAP - 1, color);
+  }
+  sprite.setTextColor(TFT_WHITE);
+  sprite.drawString("BRIGHTNESS", M_20, DOWN_BUTTONS_Y_OFFSET - TEXT_HEIGHT, 2);
+
+  char opacityStr[4];
+  sprintf(opacityStr, "%d", opacitySelected);
+  sprite.fillRect(TAB_WIDTH - OPACITY_BAR_SHORTER + SPACE - 24, DOWN_BUTTONS_Y_OFFSET - TEXT_HEIGHT, 34, TEXT_HEIGHT - 3, TFT_WHITE);
+  sprite.setTextColor(TFT_BLACK);
+  sprite.drawString(opacityStr, TAB_WIDTH - OPACITY_BAR_SHORTER + SPACE - sprite.textWidth(opacityStr), DOWN_BUTTONS_Y_OFFSET - TEXT_HEIGHT, 2);
+  
+  sprite.drawRect(M_20, DOWN_BUTTONS_Y_OFFSET, TAB_WIDTH - OPACITY_BAR_SHORTER, OPACITY_BAR_HEIGHT, TFT_WHITE);
+}
+
+void drawForceBrightnessButton() {
+  int buttonColor = (isForcedBrightness) ? TFT_WHITE : TFT_BLACK;
+  int textColor = (isForcedBrightness) ? TFT_BLACK : TFT_WHITE;
+  int borderColor = TFT_WHITE;
+
+  sprite.fillRoundRect(TAB_WIDTH - 50 + SPACE, DOWN_BUTTONS_Y_OFFSET - 5, FORCE_BUTTON_WIDTH, FORCE_BUTTON_HEIGHT, 8, buttonColor);
+
+  sprite.drawRoundRect(TAB_WIDTH - 50 + SPACE, DOWN_BUTTONS_Y_OFFSET - 5, FORCE_BUTTON_WIDTH, FORCE_BUTTON_HEIGHT, 8, borderColor);
+
+  sprite.setTextColor(textColor, buttonColor);
+  sprite.setTextSize(1);
+
+  int textWidth = sprite.textWidth("FORCE");
+  int textHeight = sprite.fontHeight();
+  int textX = (TAB_WIDTH - 50 + SPACE) + ((60 - textWidth) / 2);
+  int textY = DOWN_BUTTONS_Y_OFFSET - 5 + ((30 - textHeight) / 2);
+  sprite.drawString("FORCE", textX, textY);
 }
 
 uint16_t hueToRGB565(float hue) {
@@ -68,200 +125,61 @@ uint16_t hueToRGB565(float hue) {
     case 5: r = v * 255; g = p * 255; b = q * 255; break;
   }
 
-  // Convert RGB to 16-bit color format
   return tft.color565(r, g, b);
 }
 
-int findSelectedColorInColorBar(int position) {
-  float hue = (float)position / (TAB_WIDTH - 1);  // Normalize position to range [0, 1]
-  return hueToRGB565(hue);
+uint16_t getOpacityColor(uint16_t color, float opacity) {
+  uint8_t r = ((color >> 11) & 0x1F) * 8;
+  uint8_t g = ((color >> 5) & 0x3F) * 4;
+  uint8_t b = (color & 0x1F) * 8;
+
+  r = r * opacity;
+  g = g * opacity;
+  b = b * opacity;
+
+  return tft.color565(r, g, b);
+}
+
+uint8_t findSelectedHueInColorBar(int position) {
+  float ratio = (float)position / (TAB_WIDTH - 1);
+  return (uint8_t)(ratio * 255);
+}
+
+uint8_t findSelectedOpacityInOpacityBar(int position) {
+  // Calculate the ratio as a float before multiplying by 255
+  float ratio = (float)position / (TAB_WIDTH - OPACITY_BAR_SHORTER - 1);
+  return (uint8_t)(ratio * 255);
 }
 
 void drawCursor(int x) {
   sprite.fillRect(x + M_20, TAB_HEIGHT + SPACE + TEXT_HEIGHT, 10, COLOR_BAR_HEIGHT, TFT_WHITE);
 }
 
-void drawSelectedColor(int position) {
-  boolean selected = (selectedAnim == EASY);
-  sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
-  sprite.drawString("EASY", M_20, DOWN_TEXT_Y_OFFSET, 2);
-  sprite.drawRoundRect(M_20, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
-  sprite.fillRoundRect(M_20 + GAP, DOWN_BUTTONS_Y_OFFSET + GAP, INSIDE_SIZE, INSIDE_SIZE, 8, findSelectedColorInColorBar(position));
-}
-
-uint16_t interpolateColor(uint16_t color1, uint16_t color2, float t) {
-  // Extract RGB components from RGB565
-  uint8_t r1 = (color1 >> 11) & 0x1F;
-  uint8_t g1 = (color1 >> 5) & 0x3F;
-  uint8_t b1 = color1 & 0x1F;
-
-  uint8_t r2 = (color2 >> 11) & 0x1F;
-  uint8_t g2 = (color2 >> 5) & 0x3F;
-  uint8_t b2 = color2 & 0x1F;
-
-  // Interpolate each channel in full range
-  uint8_t r = r1 + t * (r2 - r1);
-  uint8_t g = g1 + t * (g2 - g1);
-  uint8_t b = b1 + t * (b2 - b1);
-
-  // Repack interpolated RGB into RGB565 format
-  return (r << 11) | (g << 5) | b;
-}
-
-void drawAlertColorAnim(int position, uint32_t currentTime) {
-  uint16_t selectedColor = findSelectedColorInColorBar(position);
-  uint16_t blackColor = TFT_BLACK;  // assuming TFT_BLACK is defined
-
-  float cycleTime = 60000 / bpmMain * 4;  // 2 seconds for a full cycle
-  float elapsed = (currentTime % (uint32_t)cycleTime) / cycleTime;
-
-  float t = (sin(elapsed * 2 * 3.14159265359) + 1) / 2;
-
-  uint16_t interpolatedColor = interpolateColor(blackColor, selectedColor, t);
-
-  boolean selected = (selectedAnim == ALERT);
-  sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
-  sprite.drawString("ALERT", M_20 + BUTTON_SIZE + SPACE, DOWN_TEXT_Y_OFFSET, 2);
-  sprite.drawRoundRect(M_20 + BUTTON_SIZE + SPACE, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
-  sprite.fillRoundRect(M_20 + BUTTON_SIZE + SPACE + GAP, DOWN_BUTTONS_Y_OFFSET + GAP, INSIDE_SIZE, INSIDE_SIZE, 8, interpolatedColor);
-  sprite.pushSprite(0, 0);
-}
-
-void drawVerticalBarColorAnim(int position, uint32_t currentTime) {
-  sprite.fillRect(M_20 + (BUTTON_SIZE + SPACE) * 2, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, TFT_BLACK);
-  uint16_t selectedColor = findSelectedColorInColorBar(position);
-
-  float barCycleTime = 60000 / bpmMain * 4;
-  float barElapsed = (currentTime % (uint32_t)barCycleTime) / barCycleTime;
-
-  int barPositionX = M_20 + (BUTTON_SIZE + SPACE) * 2 + GAP + (INSIDE_SIZE - 4) * (0.5 * (1 + sin(barElapsed * 2 * 3.14159265359)));
-
-  sprite.fillRoundRect(barPositionX, DOWN_BUTTONS_Y_OFFSET + GAP, 4, INSIDE_SIZE, 2, selectedColor);
-
-  boolean selected = (selectedAnim == SWEEP_VERTICAL_BAR);
-  sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
-  sprite.drawString("SWEEP", M_20 + (BUTTON_SIZE + SPACE) * 2, DOWN_TEXT_Y_OFFSET, 2);
-  
-  sprite.drawRoundRect(M_20 + (BUTTON_SIZE + SPACE) * 2, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
-
-  sprite.pushSprite(0, 0);
-}
-
-void drawHorizontalBarColorAnim(int position, uint32_t currentTime) {
-  sprite.fillRect(M_20 + (BUTTON_SIZE + SPACE) * 3, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, TFT_BLACK);
-  uint16_t selectedColor = findSelectedColorInColorBar(position);
-
-  float barCycleTime = 60000 / bpmMain * 4; 
-  float barElapsed = (currentTime % (uint32_t)barCycleTime) / barCycleTime;
-
-  int barPositionY = DOWN_BUTTONS_Y_OFFSET + GAP + (INSIDE_SIZE - 4) * (0.5 * (1 + sin(barElapsed * 2 * 3.14159265359)));
-
-  sprite.fillRoundRect(M_20 + (BUTTON_SIZE + SPACE) * 3 + GAP, barPositionY, INSIDE_SIZE, 4, 2, selectedColor);
-
-  boolean selected = (selectedAnim == SWEEP_HORIZONTAL_BAR);
-  sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
-  sprite.drawString("SWEEP", M_20 + (BUTTON_SIZE + SPACE) * 3, DOWN_TEXT_Y_OFFSET, 2);
-  
-  sprite.drawRoundRect(M_20 + (BUTTON_SIZE + SPACE) * 3, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
-
-  sprite.pushSprite(0, 0);
-}
-
-void drawDiagonalBarColorAnim(int position, uint32_t currentTime) {
-  sprite.fillRect(M_20 + (BUTTON_SIZE + SPACE) * 4, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, TFT_BLACK);
-
-  uint16_t selectedColor = findSelectedColorInColorBar(position);
-
-  float barCycleTime = 60000 / bpmMain * 4;
-  float barElapsed = (currentTime % (uint32_t)barCycleTime) / barCycleTime;
-
-  int startX = M_20 + (BUTTON_SIZE + SPACE) * 4 + GAP;
-  int startY = DOWN_BUTTONS_Y_OFFSET + GAP;
-  int endX = startX + INSIDE_SIZE;
-  int endY = startY + INSIDE_SIZE;
-
-  int lineStartX, lineStartY, lineEndX, lineEndY;
-
-  if (barElapsed < 0.5) {
-    float t = barElapsed * 2;
-    lineStartX = startX;
-    lineStartY = startY + t * INSIDE_SIZE;
-    lineEndX = startX + t * INSIDE_SIZE;
-    lineEndY = startY;
-  } else {
-    float t = (barElapsed - 0.5) * 2;
-    lineStartX = startX + t * INSIDE_SIZE;
-    lineStartY = endY;
-    lineEndX = endX;
-    lineEndY = startY + t * INSIDE_SIZE;
-  }
-
-  sprite.drawLine(lineStartX, lineStartY, lineEndX, lineEndY, selectedColor);
-
-  boolean selected = (selectedAnim == SWEEP_DIAGONAL_BAR);
-  sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
-  sprite.drawString("SWEEP", M_20 + (BUTTON_SIZE + SPACE) * 4, DOWN_TEXT_Y_OFFSET, 2);
-
-  sprite.drawRoundRect(M_20 + (BUTTON_SIZE + SPACE) * 4, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
-
-  sprite.pushSprite(0, 0);
-}
-
-void drawMultiColorAnim(uint16_t position, uint32_t currentTime) {
-  float cycleTime = 3.0;  // 20 seconds for a full cycle
-  float elapsed = (currentTime % (uint32_t)(cycleTime * 1000)) / (cycleTime * 1000.0);
-
-  float t = elapsed * (TAB_WIDTH - 1);  // TAB_WIDTH - 1 for full color range
-
-  uint16_t interpolatedColor = findSelectedColorInColorBar((int)t);
-
-  sprite.setTextColor(TFT_WHITE);
-  sprite.drawString("MULTI", M_20 + (BUTTON_SIZE + SPACE) * 2, DOWN_TEXT_Y_OFFSET, 2);
-  sprite.drawRoundRect(M_20 + (BUTTON_SIZE + SPACE) * 2, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, 8, TFT_WHITE);
-  sprite.fillRoundRect(M_20 + (BUTTON_SIZE + SPACE) * 2 + GAP, DOWN_BUTTONS_Y_OFFSET + GAP, INSIDE_SIZE, INSIDE_SIZE, 8, interpolatedColor);
-  sprite.pushSprite(0, 0);
-}
-
-void drawMultiColordzAnim(uint16_t position, uint32_t currentTime) {
-  float cycleTime = 3.0;  // 20 seconds for a full cycle
-  float elapsed = (currentTime % (uint32_t)(cycleTime * 1000)) / (cycleTime * 1000.0);
-
-  float t = elapsed * (TAB_WIDTH - 1);
-
-  uint16_t interpolatedColor = findSelectedColorInColorBar((int)t);
-
-  sprite.setTextColor(TFT_WHITE);
-  sprite.drawString("MULTI", M_20 + (BUTTON_SIZE + SPACE) * 2, DOWN_TEXT_Y_OFFSET, 2);
-  sprite.drawRoundRect(M_20 + (BUTTON_SIZE + SPACE) * 2, DOWN_BUTTONS_Y_OFFSET, BUTTON_SIZE, BUTTON_SIZE, 8, TFT_WHITE);
-  sprite.fillRoundRect(M_20 + (BUTTON_SIZE + SPACE) * 2 + GAP, DOWN_BUTTONS_Y_OFFSET + GAP, INSIDE_SIZE, INSIDE_SIZE, 8, interpolatedColor);
-  sprite.pushSprite(0, 0);
+void drawOpacityCursor(int x) {
+  sprite.fillRect(x + M_20, DOWN_BUTTONS_Y_OFFSET, 10, OPACITY_BAR_HEIGHT, TFT_WHITE);
 }
 
 void handleColorTabClick(int x, int y) {
-  if (y >= M_20 && y < M_20 + TAB_WIDTH) {
-    if (x >= TAB_HEIGHT + 10 && x < TAB_HEIGHT + 10 + COLOR_BAR_COMPONENTS) {
-      colorSelected = findSelectedColorInColorBar(y - 20);
-      cursorPosition = y - 20;
-      drawColorPickerView(cursorPosition);
-    } else if (x >= DOWN_BUTTONS_Y_OFFSET && x < DOWN_BUTTONS_Y_OFFSET + BUTTON_SIZE) {
-      if (y >= M_20 && y < M_20 + BUTTON_SIZE) {
-        selectedAnim = EASY;
-        sendValue(MESSAGE_TYPE_PATTERN, EASY);
-      } else if (y >= M_20 + (BUTTON_SIZE + SPACE) && y < M_20 + SPACE + BUTTON_SIZE * 2) {
-        selectedAnim = ALERT;
-        sendValue(MESSAGE_TYPE_PATTERN, ALERT);
-      } else if (y >= M_20 + (BUTTON_SIZE + SPACE) * 2 && y < M_20 + SPACE * 2 + BUTTON_SIZE * 3) {
-        selectedAnim = SWEEP_VERTICAL_BAR;
-        sendValue(MESSAGE_TYPE_PATTERN, SWEEP_VERTICAL_BAR);
-      } else if (y >= M_20 + (BUTTON_SIZE + SPACE) * 3 && y < M_20 + SPACE * 3 + BUTTON_SIZE * 4) {
-        selectedAnim = SWEEP_HORIZONTAL_BAR;
-        sendValue(MESSAGE_TYPE_PATTERN, SWEEP_HORIZONTAL_BAR);
-      } else if (y >= M_20 + (BUTTON_SIZE + SPACE) * 4 && y < M_20 + SPACE * 4 + BUTTON_SIZE * 5) {
-        selectedAnim = SWEEP_DIAGONAL_BAR;
-        sendValue(MESSAGE_TYPE_PATTERN, SWEEP_DIAGONAL_BAR);
+  if (x >= TAB_HEIGHT + 10 && x < DOWN_BUTTONS_Y_OFFSET - TEXT_HEIGHT) {
+    if (y >= M_20 && y < M_20 + TAB_WIDTH - 10) {
+      hueSelected = findSelectedHueInColorBar(y - M_20);
+      sendValue(MESSAGE_TYPE_HUE, hueSelected);
+      cursorPosition = y - M_20;
+    } 
+    drawColorPickerView();
+  } else if (x >= DOWN_BUTTONS_Y_OFFSET - 10 && x < DOWN_BUTTONS_Y_OFFSET + OPACITY_BAR_COMPONENTS + 10) {
+    if (y >= M_20 && y < M_20 + TAB_WIDTH - OPACITY_BAR_SHORTER - 10) {
+      opacitySelected = findSelectedOpacityInOpacityBar(y - M_20);
+      opacityPosition = y - M_20;
+      sendValue(MESSAGE_TYPE_BRIGHTNESS, opacitySelected);
+    } else if (y >= M_20 + TAB_WIDTH - OPACITY_BAR_SHORTER + SPACE && y < M_20 + TAB_WIDTH - OPACITY_BAR_SHORTER + SPACE + FORCE_BUTTON_WIDTH) {
+      isForcedBrightness = !isForcedBrightness;
+      if (isForcedBrightness) {
+        sendValue(MESSAGE_TYPE_FORCE_BRIGHTNESS, (isForcedBrightness) ? 1 : 0);
       }
     }
+    drawColorPickerView();
   } 
 }
 
-#endif  // COLOR_VIEW_H
+#endif 

@@ -7,20 +7,20 @@
 #include <esp_wifi.h>
 
 const uint8_t MESSAGE_TYPE_BRIGHTNESS = 0;
-const uint8_t MESSAGE_TYPE_BPM = 1;
-const uint8_t MESSAGE_TYPE_PATTERN = 2;
-const uint8_t MESSAGE_TYPE_LIGHT_DEVICE = 3;
-const uint8_t MESSAGE_TYPE_HUE = 4;
+const uint8_t MESSAGE_TYPE_HUE = 1;
+const uint8_t MESSAGE_TYPE_BPM = 2;
+const uint8_t MESSAGE_TYPE_PATTERN = 3;
+const uint8_t MESSAGE_TYPE_LIGHT_DEVICE = 4;
+const uint8_t MESSAGE_TYPE_FORCE_BRIGHTNESS = 5; 
 
-const uint8_t MESSAGE_TWEAK_QUANTITY = 5;
-const uint8_t MESSAGE_TWEAK_BPM = 6;    
-const uint8_t MESSAGE_TWEAK_COLOR = 7;     
-const uint8_t MESSAGE_TWEAK_PHASE = 8;    
+const uint8_t MESSAGE_TWEAK_QUANTITY = 6;
+const uint8_t MESSAGE_TWEAK_BPM = 7;    
+const uint8_t MESSAGE_TWEAK_COLOR = 8;     
+const uint8_t MESSAGE_TWEAK_PHASE = 9;    
 
 typedef struct Message {
-  uint8_t message_type;  // 0: brightness, 1: bpm, 2: pattern, 3: define light device 4: RGBColor
-  uint8_t value;          // For brightness, BPM, pattern, or define light device
-  uint16_t hue;     // For RGBColor (4 bytes)
+  uint8_t message_type;   
+  uint8_t value;          
 } Message;
 
 Message message;
@@ -32,6 +32,9 @@ void data_received(const uint8_t *mac, const uint8_t *incomingData, int len) {
         case MESSAGE_TYPE_BRIGHTNESS:
             brightness = message.value;
             break;
+        case MESSAGE_TYPE_HUE:
+            hue = message.value;
+            break;
         case MESSAGE_TYPE_BPM:
             bpm = message.value;
             break;
@@ -40,9 +43,6 @@ void data_received(const uint8_t *mac, const uint8_t *incomingData, int len) {
             break;
         case MESSAGE_TYPE_LIGHT_DEVICE:
             // This won't be used for the coat code, because the ESP32S3 board is attached to the coat, so it can't connect to a WristBand or Feet or HeadBand.
-            break;
-        case MESSAGE_TYPE_HUE:
-            hue = message.hue;
             break;
         case MESSAGE_TWEAK_QUANTITY:
             tweakQuantity = message.value;
@@ -55,6 +55,9 @@ void data_received(const uint8_t *mac, const uint8_t *incomingData, int len) {
             break;
         case MESSAGE_TWEAK_PHASE: 
             tweakPhase = message.value;
+            break;
+        case MESSAGE_TYPE_FORCE_BRIGHTNESS: 
+            isForcedBrightness = (message.value == 1) ? true : false;
             break;
         default:
             break;
