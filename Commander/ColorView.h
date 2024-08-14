@@ -3,27 +3,6 @@
 
 #include "ESPSender.h"
 
-#define EASY                         0
-#define ALERT                        1
-#define SWEEP_VERTICAL_BAR           2
-#define SWEEP_HORIZONTAL_BAR         3
-#define SWEEP_DIAGONAL_BAR           4
-
-#define TAB_WIDTH                    280
-#define TAB_HEIGHT                   40
-#define INSIDE_SIZE                  36
-#define COLOR_BAR_HEIGHT             20
-#define OPACITY_BAR_HEIGHT           20
-#define COLOR_BAR_COMPONENTS         40
-#define OPACITY_BAR_COMPONENTS       40
-#define M_20                         20
-#define M_40                         40
-#define GAP                          2
-#define SPACE                        10
-#define OPACITY_BAR_SHORTER          70
-#define FORCE_BUTTON_WIDTH           60
-#define FORCE_BUTTON_HEIGHT          30
-
 const int TEXT_HEIGHT = M_20;
 const int DOWN_TEXT_Y_OFFSET    = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SPACE;
 const int DOWN_BUTTONS_Y_OFFSET = TAB_HEIGHT + SPACE + COLOR_BAR_COMPONENTS + SPACE + TEXT_HEIGHT;
@@ -37,6 +16,8 @@ void drawOpacityBar();
 void drawCursor(int x);
 void drawOpacityCursor(int x);
 uint16_t hueToRGB565(float hue);
+uint32_t hueToRGB(uint8_t hue);
+int findSelectedColorInColorBar(int position);
 uint16_t getOpacityColor(uint16_t color, float opacity);
 
 void drawColorPickerView() {
@@ -164,6 +145,7 @@ void handleColorTabClick(int x, int y) {
     if (y >= M_20 && y < M_20 + TAB_WIDTH - 10) {
       hueSelected = findSelectedHueInColorBar(y - M_20);
       sendValue(MESSAGE_TYPE_HUE, hueSelected);
+      colorSelected = findSelectedColorInColorBar(y - M_20);
       cursorPosition = y - M_20;
     } 
     drawColorPickerView();
@@ -181,5 +163,44 @@ void handleColorTabClick(int x, int y) {
     drawColorPickerView();
   } 
 }
+
+int findSelectedColorInColorBar(int position) {
+  int r, g, b;
+
+  // Position goes to 280 max and min 0
+  // Normalize position to range [0, 1]
+  float normalizedPosition = (float)position / (TAB_WIDTH - 1);
+
+  // Determine the RGB values based on the normalized position
+  if (normalizedPosition < 1.0 / 6.0) {
+    r = 255;
+    g = (int)(255 * normalizedPosition * 6);
+    b = 0;
+  } else if (normalizedPosition < 2.0 / 6.0) {
+    r = (int)(255 - 255 * (normalizedPosition - 1.0 / 6.0) * 6);
+    g = 255;
+    b = 0;
+  } else if (normalizedPosition < 3.0 / 6.0) {
+    r = 0;
+    g = 255;
+    b = (int)(255 * (normalizedPosition - 2.0 / 6.0) * 6);
+  } else if (normalizedPosition < 4.0 / 6.0) {
+    r = 0;
+    g = (int)(255 - 255 * (normalizedPosition - 3.0 / 6.0) * 6);
+    b = 255;
+  } else if (normalizedPosition < 5.0 / 6.0) {
+    r = (int)(255 * (normalizedPosition - 4.0 / 6.0) * 6);
+    g = 0;
+    b = 255;
+  } else {
+    r = 255;
+    g = 0;
+    b = (int)(255 - 255 * (normalizedPosition - 5.0 / 6.0) * 6);
+  }
+
+  // Convert RGB to 16-bit color format
+  return tft.color565(r, g, b);
+}
+
 
 #endif 

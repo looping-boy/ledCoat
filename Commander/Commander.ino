@@ -5,6 +5,7 @@
 #include "SwitchView.h"
 #include "BPMView.h"
 #include "TweakView.h"
+#include "PatternView.h"
 #include "ESPSender.h"
 
 unsigned long lastTouchTime = 0;
@@ -19,6 +20,7 @@ uint8_t x = 0;
 unsigned long lastUpdateTime = 0;
 unsigned long touchStartTime = 0;
 
+void draw(int page, unsigned long currentTime = 0);
 
 void setup() {
   // SCREEN PREP
@@ -28,10 +30,13 @@ void setup() {
   digitalWrite(PIN_TOUCH_RES, LOW);
   delay(500);
   digitalWrite(PIN_TOUCH_RES, HIGH);
+  ledcSetup(0, 10000, 8);
+  ledcAttachPin(PIN_LCD_BL, 0);
+  ledcWrite(0, backLight);
   tft.begin();
   tft.setRotation(1);
   sprite.createSprite(320, 170);
-  sprite.setTextColor(TFT_WHITE,TFT_BLACK);
+  sprite.setTextColor(TFT_WHITE, TFT_BLACK);
   Wire.begin(PIN_IIC_SDA, PIN_IIC_SCL);
   draw(activeButton);
 
@@ -43,13 +48,13 @@ void setup() {
 
   // INIT
   hueSelected = findSelectedHueInColorBar(cursorPosition);
+  colorSelected = findSelectedColorInColorBar(cursorPosition);
   //draw(activeButton);
   lastTouchTime = millis();  // Initialize last touch time
 }
 
 
-void draw(int page)
-{  
+void draw(int page, unsigned long currentTime) {
   activeButton = page;
   sprite.fillSprite(TFT_BLACK);
 
@@ -58,9 +63,10 @@ void draw(int page)
 
   // Draw buttons on the sticky bar
   drawButton(0, 0, "B1", 1);
-  drawButton(50, 0, "B2", 2);
-  drawButton(100, 0, "B3", 3);
-  drawButton(150, 0, "B4", 4);
+  drawButton((BUTTON_SIZE + SPACE), 0, "B2", 2);
+  drawButton((BUTTON_SIZE + SPACE) * 2, 0, "B3", 3);
+  drawButton((BUTTON_SIZE + SPACE) * 3, 0, "B4", 4);
+  drawButton((BUTTON_SIZE + SPACE) * 4, 0, "B5", 5);
 
   // Draw different views based on the active button
   switch (page) {
@@ -76,26 +82,46 @@ void draw(int page)
     case 4:
       drawBPMView();
       break;
+    case 5:
+      drawPatternView(currentTime);
+      break;
     default:
       break;
   }
-  sprite.pushSprite(0,0); 
+  sprite.pushSprite(0, 0);
 }
 
 void loop() {
 
   unsigned long currentTime = millis();
-  float deltaTime = (currentTime - lastUpdateTime) / 1000.0;
-  lastUpdateTime = currentTime;
 
-  if (activeButton == 3) {
-    if (currentTime - UIMillis >= intervalUI) {
-      UIMillis = currentTime;
-      // drawSelectedColor(cursorPosition);
-      // drawAlertColorAnim(cursorPosition, currentTime);
-      // drawHorizontalBarColorAnim(cursorPosition, currentTime);
-      // drawVerticalBarColorAnim(cursorPosition, currentTime);
-      // drawDiagonalBarColorAnim(cursorPosition, currentTime);
+  if (currentTime - UIMillis >= intervalUI) {
+    UIMillis = currentTime;
+
+    // Backlight Screen Brightness
+    if (digitalRead(14) == 0 && backLight < 240) {
+      backLight += 10;
+      ledcSetup(0, 10000, 8);
+      ledcAttachPin(PIN_LCD_BL, 0);
+      ledcWrite(0, backLight);
+    }
+    if (digitalRead(0) == 0 && backLight > 10) {
+      backLight -= 10;
+      ledcSetup(0, 10000, 8);
+      ledcAttachPin(PIN_LCD_BL, 0);
+      ledcWrite(0, backLight);
+    }
+
+    // Anim pattern screen
+    if (activeButton == 5) {
+      drawSelectedColor();
+      drawAlertColorAnim(currentTime);
+      drawHorizontalBarColorAnim(currentTime);
+      drawVerticalBarColorAnim(currentTime);
+      drawDiagonalBarColorAnim(currentTime);
+      drawCircularBarColorAnim(currentTime);
+      drawCrossBarColorAnim(currentTime);
+      drawZigZagBarColorAnim(currentTime);
     }
   }
 
@@ -111,22 +137,22 @@ void loop() {
       delay(2);
     }
   }
-  
+
   if (touch.read()) {
-    if(deb==0){
-      deb=1;
+    if (deb == 0) {
+      deb = 1;
       TP_Point t = touch.getPoint(0);
-      if(t.x<170)
-      handleUnTouch(t.x, t.y);
+      if (t.x < 170)
+        handleUnTouch(t.x, t.y, currentTime);
       //draw(t.x,t.y);
-    } 
+    }
   } else {
     //delay(20);
-    deb=0;
+    deb = 0;
   }
 }
 
-void handleUnTouch(int x, int y) {
+void handleUnTouch(int x, int y, unsigned long currentTime) {
 
   // For static views
   int transformedY = y;
@@ -140,12 +166,14 @@ void handleUnTouch(int x, int y) {
   if (transformedX < STICKY_BAR_HEIGHT) {
     if (transformedY >= 0 && transformedY < BUTTON_SIZE) {
       (activeButton == 1) ? null() : draw(1);
-    } else if (transformedY >= 50 && transformedY < 50 + BUTTON_SIZE) {
+    } else if (transformedY >= (BUTTON_SIZE + SPACE) && transformedY < (BUTTON_SIZE + SPACE) + BUTTON_SIZE) {
       (activeButton == 2) ? null() : draw(2);
-    } else if (transformedY >= 100 && transformedY < 100 + BUTTON_SIZE) {
+    } else if (transformedY >= (BUTTON_SIZE + SPACE) * 2 && transformedY < (BUTTON_SIZE + SPACE) * 2 + BUTTON_SIZE) {
       (activeButton == 3) ? null() : draw(3);
-    } else if (transformedY >= 150 && transformedY < 150 + BUTTON_SIZE) {
+    } else if (transformedY >= (BUTTON_SIZE + SPACE) * 3 && transformedY < (BUTTON_SIZE + SPACE) * 3 + BUTTON_SIZE) {
       (activeButton == 4) ? null() : draw(4);
+    } else if (transformedY >= (BUTTON_SIZE + SPACE) * 4 && transformedY < (BUTTON_SIZE + SPACE) * 4 + BUTTON_SIZE) {
+      (activeButton == 5) ? null() : draw(5, currentTime);
     }
   }
   // VIEWS
@@ -176,21 +204,21 @@ void handleUnTouch(int x, int y) {
           redrawView1();
         }
       }
-    } else if (activeButton == 2) {  // VIEW 2
+    } else if (activeButton == 2) {
       if (transformedY >= 20 && transformedY < 20 + 80) {
         if (transformedX >= STICKY_BAR_HEIGHT + 30 && transformedX < STICKY_BAR_HEIGHT + 30 + 30) {
           tweak1 = (tweak1 % 7) + 1;
-          sendValue(MESSAGE_TWEAK_QUANTITY, (uint8_t) pow(2, tweak1));
+          sendValue(MESSAGE_TWEAK_QUANTITY, (uint8_t)pow(2, tweak1));
           drawTweakView();
         } else if (transformedX >= STICKY_BAR_HEIGHT + 30 + 60 && transformedX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
           tweak4 = (tweak4 % 7) + 1;
-          sendValue(MESSAGE_TWEAK_PHASE, (uint8_t) tweak4);
+          sendValue(MESSAGE_TWEAK_PHASE, (uint8_t)tweak4);
           drawTweakView();
         }
       } else if (transformedY >= SPACE_BETWEEN_SWITCH + 20 && transformedY < SPACE_BETWEEN_SWITCH + 20 + 80) {
         if (transformedX >= STICKY_BAR_HEIGHT + 30 && transformedX < STICKY_BAR_HEIGHT + 30 + 30) {
           tweak2 = (tweak2 % 7) + 1;
-          sendValue(MESSAGE_TWEAK_BPM, (uint8_t) pow(2, tweak2));
+          sendValue(MESSAGE_TWEAK_BPM, (uint8_t)pow(2, tweak2));
           drawTweakView();
         } else if (transformedX >= STICKY_BAR_HEIGHT + 30 + 60 && transformedX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
           // Nothing yet
@@ -198,7 +226,7 @@ void handleUnTouch(int x, int y) {
       } else if (transformedY >= SPACE_BETWEEN_SWITCH * 2 + 20 && transformedY < SPACE_BETWEEN_SWITCH * 2 + 20 + 80) {
         if (transformedX >= STICKY_BAR_HEIGHT + 30 && transformedX < STICKY_BAR_HEIGHT + 30 + 30) {
           tweak3 = (tweak3 % 7) + 1;
-          sendValue(MESSAGE_TWEAK_COLOR, (uint8_t) pow(2, tweak3));
+          sendValue(MESSAGE_TWEAK_COLOR, (uint8_t)pow(2, tweak3));
           drawTweakView();
         } else if (transformedX >= STICKY_BAR_HEIGHT + 30 + 60 && transformedX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
           // Nothing yet
@@ -207,8 +235,9 @@ void handleUnTouch(int x, int y) {
     } else if (activeButton == 3) {  // VIEW 3
       handleColorTabClick(transformedX, transformedY);
     } else if (activeButton == 4) {  // VIEW 3
-      //handleColorTabClick(transformedX, transformedY);
       bpmMain = BPMViewEvent();
+    } else if (activeButton == 5) {  // VIEW 3
+      handlePatternViewClick(transformedX, transformedY);
     }
   }
 }
@@ -237,12 +266,12 @@ void handleUnTouch(int x, int y) {
 
 
 
-  // ANIMATIONS ON THE PAGES 
+// ANIMATIONS ON THE PAGES
 
-  // TP_Point t = touch.getPoint(0);
-  // handleUnTouch(t.x, t.y);
+// TP_Point t = touch.getPoint(0);
+// handleUnTouch(t.x, t.y);
 
-  // TOUCH :
+// TOUCH :
 //   if (touch.read()) {
 //     // lastTouchTime = millis();
 //     // (screenOn) ? ifScreenOn(deltaTime, currentTime) : ifScreenOff();
@@ -318,9 +347,4 @@ void handleUnTouch(int x, int y) {
 // }
 
 void null() {
-  
 }
-
-
-
-

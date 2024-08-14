@@ -24,10 +24,27 @@
 #define PIN_TOUCH_RES 21
 
 // Constants
-#define STICKY_BAR_HEIGHT 40
-#define SPACE_BETWEEN_SWITCH 100
-#define BUTTON_SIZE 40
-#define BIG_BUTTON_SIZE 90
+#define TAB_WIDTH                    280
+#define TAB_HEIGHT                   40
+#define SMALL_INSIDE_SIZE            26
+#define INSIDE_SIZE                  36
+#define COLOR_BAR_HEIGHT             20
+#define OPACITY_BAR_HEIGHT           20
+#define COLOR_BAR_COMPONENTS         40
+#define OPACITY_BAR_COMPONENTS       40
+#define M_20                         20
+#define M_0                          4
+#define M_40                         40
+#define GAP                          2
+#define SPACE                        10
+#define OPACITY_BAR_SHORTER          70
+#define FORCE_BUTTON_WIDTH           60
+#define FORCE_BUTTON_HEIGHT          30
+#define STICKY_BAR_HEIGHT            40
+#define SPACE_BETWEEN_SWITCH         100
+#define BUTTON_SIZE                  40
+#define BIG_BUTTON_SIZE              90
+#define SMALL_BUTTON_SIZE            30
 const int STICKY_BAR_COLOR = TFT_BLACK;
 
 // Define the scrollable area
@@ -82,11 +99,27 @@ int opacityPosition = 50;
 // State value
 uint8_t hueSelected = 150;
 uint8_t opacitySelected = 20;
+uint32_t colorSelected = 0;
 bool isForcedBrightness = false;
 bool isBPMMode = false;
 uint8_t activeButton = 3;
 
 // Anim values
 uint8_t bpmMain = 120;
+
+// Screen Backlight Brightness
+uint8_t backLight = 50;
+
+
+// PATTERNS 
+#define EASY                         0
+#define ALERT                        1
+#define SWEEP_VERTICAL_BAR           2
+#define SWEEP_HORIZONTAL_BAR         3
+#define SWEEP_DIAGONAL_BAR           4
+#define SWEEP_ZIGZAG_BAR             5
+#define SWEEP_CIRCULAR_BAR           6
+#define SWEEP_CROSS_BAR              7
+
 
 #endif
