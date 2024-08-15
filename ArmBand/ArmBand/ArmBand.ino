@@ -84,10 +84,20 @@ void loop() {
 
   unsigned long currentTime = millis();
 
+  FastLED.clear();
   switch (pattern) {
     // FIRST LINE
     case ANIM_STATIC_FULL:
       animFullStatic();
+      break;
+    case ANIM_ALERT_FULL:
+      animAlertFull(currentTime);
+      break;
+    case ANIM_VERTICAL_LINE:
+      //animRightLine(currentTime, startAnimationTime);
+      break;
+    case ANIM_HORIZONTAL_LINE:
+      animVerticalRainbow(currentTime, startAnimationTime);
       break;
     default:
       FastLED.clear();

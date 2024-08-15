@@ -39,7 +39,7 @@ CRGB leds[NUM_STRIPS][100];
 #define ANIM_GIF_RAINBOW 20
 #define ANIM_GIF_PSY 21
 
-uint8_t pattern = ANIM_STATIC_FULL;
+uint8_t pattern = ANIM_HORIZONTAL_LINE;
 uint8_t patternOld = 0;
 uint8_t bpm = 120;
 bool animDone = false; 
@@ -71,7 +71,7 @@ uint8_t lightDevice = 0;
 #define LIGHT_DEVICE_HEADBAND 2 // Total , 2 x
 
 uint8_t totalLine = 2;
-uint8_t totalColumn = 20;
+uint8_t totalColumn = 24;
 
 #define NUM_STRIPS 4
 #define POT_PIN D0
