@@ -136,7 +136,17 @@ uint8_t backLight = 50;
 #define ANIM_COLORFULL_RAIN 14
 #define ANIM_COLORFULL_SPARKLE 15
 
-#define ANIM_COLOR_PULSE 16
+#define ANIM_GIF_CHECK_BLUE 16
+#define ANIM_GIF_PONG 17
+#define ANIM_GIF_WARNING 18
+#define ANIM_GIF_SPIRAL 19
+#define ANIM_GIF_RAINBOW 20
+#define ANIM_GIF_PSY 21
+
+#define MAX_ANIMS 16
+uint8_t selectedAnims[MAX_ANIMS] = {ANIM_DIAGONAL_RAINBOW};
+uint8_t numSelectedAnims = 0;
+uint8_t inTheSelectedAnims = 0;
 
 
 #endif

@@ -38,43 +38,6 @@ void setup() {
   }
 }
 
-
-#define ANIM_STATIC_FULL 0
-#define ANIM_ALERT_FULL 1
-#define ANIM_VERTICAL_LINE 2
-#define ANIM_HORIZONTAL_LINE 3
-#define ANIM_DIAGONAL_LINE 4
-#define ANIM_CIRCLE_LINE 5
-#define ANIM_CROSS_VERTICAL_LINE 6
-#define ANIM_CROSS_HORIZONTAL_LINE 7
-
-#define ANIM_COLOR_FULL 8
-#define ANIM_ALERT_COLOR_FULL 9
-#define ANIM_VERTICAL_RAINBOW 10
-#define ANIM_HORIZONTAL_RAINBOW 11
-#define ANIM_DIAGONAL_RAINBOW 12
-#define ANIM_CIRCLE_RAINBOW 13
-#define ANIM_COLORFULL_RAIN 14
-#define ANIM_COLORFULL_SPARKLE 15
-
-#define ANIM_COLOR_PULSE 16
-#define RAIN_CHOOSE_HUE 8
-#define PULSE_CHOOSE_HUE_1 9
-#define PULSE_CHOOSE_HUE_2 10
-#define RAIN_COLORFULL 11
-#define RAIN_COLORFULL_BEAT 12
-#define LINE_HORIZONTAL_UP 13
-#define LINE_HORIZONTAL_DOWN 14
-#define LINE_HORIZONTAL_UP_DOWN 15
-#define SPARKLE_WHITE 16
-#define SPARKLE_COLOR 17
-#define SPARKLE_COLOR_BEAT 18
-
-#define GIF_PONG 19
-#define GIF_SPIRAL 20
-#define SPIRAL 21
-#define WARNING 22
-
 void loop() {
   //readBatteryVoltage();
   if (!isForcedBrightness) {
@@ -145,49 +108,29 @@ void loop() {
     case ANIM_COLORFULL_SPARKLE:
       animColorfulSparkle();  
       break;
-    case ANIM_COLOR_PULSE:
-      //colorPulse(currentTime);  
+
+    // THIRD LINE
+    case ANIM_GIF_CHECK_BLUE:
+      animGifCheckBlue(currentTime, startAnimationTime);
       break;
+    case ANIM_GIF_PONG:
+      animGifPong(currentTime, startAnimationTime);
+      break;
+    case ANIM_GIF_WARNING:
+      animGifWarning(currentTime, startAnimationTime);
+      break;
+    case ANIM_GIF_SPIRAL:
+      animGifSpiral(currentTime, startAnimationTime);
+      break;
+    case ANIM_GIF_RAINBOW:
+      animGifRainbow(currentTime, startAnimationTime);
+      break;
+    case ANIM_GIF_PSY:
+      animGifPsy(currentTime, startAnimationTime);
+      break;  
     default:
       FastLED.clear();  
       break;
   }
   FastLED.show();
-
 }
-
-    //   break;
-    // default:
-    //   fullGradientVertical(currentTime, startAnimationTime);
-    //   leftLine(currentTime, startAnimationTime);
-    //   upLine(currentTime, startAnimationTime);
-    //   bigTempoPulse(currentTime, startAnimationTime);
-    //   colorfulSparkle();
-    //   rainbowCycle(currentTime, startAnimationTime);
-    //   myMatrixRain(currentTime, startAnimationTime);
-    //   break;
-
-
-  // rainbowCycle(1);
-  // horizontalLignRainbowCycle(1);
-  // verticalRainbowCycle(1);
-  // breathing();
-  // breathingSmall();
-  // printNiantCat();
-  // circleRainbowCycle(5);
-  // printLooping2();
-  // displayGif(1);
-  // animateGif();
-  // batteryLevel();
-  // psyAnim();
-  // pongAnim();
-  // spiralAnim();
-  // diagonalRainbowCycle(1);
-  // warningAnim();
-  // warningAnim();
-  // checkBlueAnim();
-  // blink();
-  // explosion(5);
-  // circleRainbowCycle(5);
-
-

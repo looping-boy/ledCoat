@@ -306,7 +306,7 @@ void animColorfulSparkle() {
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 // LINE OF PATTERN 3 --------------------------------------------------------------------------------------------------------------------
-
+//
 void sparkle() {
   FastLED.clear();
   uint8_t originalBrightness = FastLED.getBrightness();
@@ -454,70 +454,6 @@ void blink() {
   }
 }
 
-void breathing() {
-  for (uint16_t j = 0; j < 256; j++) {
-    for (uint16_t i = 0; i < 477; i++) {
-      for (int l = 3; l >= 0; l--) {
-        leds[l][i] = CHSV(((5 * 256 / SIZE_ANIM) + j) & 255, 255, brightness);
-      }
-    }
-    FastLED.show();
-  }
-}
-
-void horizontalLignRainbowCycle(uint8_t wait) {
-  for (uint16_t j = 0; j < 37; j++) {
-    for (int i = 0; i < 72; i++) {
-      if (j == i) {
-        for (int k = 0; k < 72; k++) {
-          leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CHSV(((i * 256 / 72) + j * (256 / 37)) & 255, 255, brightness);
-        }
-      } else {
-        for (int k = 0; k < 72; k++) {
-          leds[ledMappingHorizontal[i][k].pwmChannel][ledMappingHorizontal[i][k].indexInPwm] = CHSV(0, 0, 0);  // Off in HSV
-        }
-      }
-    }
-    FastLED.show();
-    delay(wait);
-  }
-}
-
-
-
-// The first one anim
-void myMatrixRain(long currentTime, long startAnimationTime) {
-
-  fadeToBlackBy(leds[0], 451, 40);
-  fadeToBlackBy(leds[1], 451, 40);
-  fadeToBlackBy(leds[2], 477, 40);
-  fadeToBlackBy(leds[3], 477, 40);
-
-  float barCycleTime = ((60000 / bpm) * (tweakBPM) / 8); // tweak at 4 look good
-
-  if (currentTime % (uint8_t)(16 / tweakQuantity) == 0) { // tweak at 1 looks good
-    int m = random(0, NUM_VERTICAL_STRIPS - 1);
-    if (rainPosition[m] == 0) {
-      rainPosition[m] = currentTime;
-    }
-  }
-
-  for (int i = 0; i < NUM_VERTICAL_STRIPS; i++) {
-    if (rainPosition[i] != 0) {
-      uint8_t outOfOne = (uint8_t)((((currentTime - rainPosition[i]) % (uint32_t)barCycleTime)) / barCycleTime);
-      uint8_t k = (uint8_t)((((currentTime - rainPosition[i]) % (uint32_t)barCycleTime) * ledMappingVertical[i].numbersOfLeds) / barCycleTime);
-      uint8_t j = (uint8_t) ((rainPosition[i] + ((k * tweakColor) / 4)) % 255);
-      if (!ledMappingVertical[i].isGoingUp) {
-        leds[ledMappingVertical[i].pwmChannel][k + ledMappingVertical[i].indexInPwm] = CHSV(j, 255, brightness);
-      } else {
-        leds[ledMappingVertical[i].pwmChannel][ledMappingVertical[i].indexInPwm - k + ledMappingVertical[i].numbersOfLeds - 1] = CHSV(j, 255, brightness);
-      }
-      if (k >= ledMappingVertical[i].numbersOfLeds - 3) {
-        rainPosition[i] = 0;
-      }
-    }
-  }
-}
 
 void blueRain(long currentTime, long startAnimationTime) {
   float barCycleTime = (60000 / bpm) / 16;
@@ -584,7 +520,6 @@ void matrixRain(long currentTime, long startAnimationTime) {
 
   FastLED.show();
 }
-
 
 CHSV Wheel(byte WheelPos) {
   WheelPos = 255 - WheelPos;  // Reverse direction for smoother color transition

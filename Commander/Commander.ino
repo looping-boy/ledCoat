@@ -15,7 +15,6 @@ const unsigned long screenTimeout = 1000000;
 unsigned long beatMillis = 0;
 unsigned long UIMillis = 0;
 unsigned long intervalUI = 1000 / 5;
-uint8_t x = 0;
 
 // // Variables to handle scrolling and momentum
 unsigned long lastUpdateTime = 0;
@@ -132,10 +131,9 @@ void loop() {
   if (isBPMMode) {
     if (currentTime - beatMillis >= intervalBPM) {
       beatMillis = currentTime;
-      x++;
-      uint8_t messageType = MESSAGE_TYPE_PATTERN;
-      sendValue(messageType, x % 16 + 1);
-      delay(2);
+      inTheSelectedAnims++;
+      uint8_t inThe = inTheSelectedAnims % numSelectedAnims;
+      sendValue(MESSAGE_TYPE_PATTERN, selectedAnims[inThe]);
     }
   }
 
@@ -148,7 +146,7 @@ void loop() {
       //draw(t.x,t.y);
     }
   } else {
-    //delay(20);
+    delay(20);
     deb = 0;
   }
 }

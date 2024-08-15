@@ -61,4 +61,13 @@ int findSelectedColorInColorBar(int position) {
   return tft.color565(r, g, b);
 }
 
+int isSelected(int anim) {
+    for (int i = 0; i < numSelectedAnims; i++) {
+        if (selectedAnims[i] == anim) {
+            return 1; // Animation is selected
+        }
+    }
+    return 0; // Animation is not selected
+}
+
 #endif

@@ -18,25 +18,34 @@ CRGB leds[NUM_STRIPS][500];
 // ESP NOW
 #define WIFI_CHANNEL 3
 
-// ANIMS
-#define FULL 1
-#define FULL_VERTICAL 2
-#define FULL_HORIZONTAL 3
-#define FULL_DIAGONAL 4
-#define FULL_CIRCLE 5
-#define FULL_TRIANGLE 6
-#define FULL_ALARM 7
+// PATTERNS 
+#define ANIM_STATIC_FULL 0
+#define ANIM_ALERT_FULL 1
+#define ANIM_VERTICAL_LINE 2
+#define ANIM_HORIZONTAL_LINE 3
+#define ANIM_DIAGONAL_LINE 4
+#define ANIM_CIRCLE_LINE 5
+#define ANIM_CROSS_VERTICAL_LINE 6
+#define ANIM_CROSS_HORIZONTAL_LINE 7
 
-#define RAIN 8
-#define LINE_HORIZONTAL 8
-#define SPARKLE 8
+#define ANIM_COLOR_FULL 8
+#define ANIM_ALERT_COLOR_FULL 9
+#define ANIM_VERTICAL_RAINBOW 10
+#define ANIM_HORIZONTAL_RAINBOW 11
+#define ANIM_DIAGONAL_RAINBOW 12
+#define ANIM_CIRCLE_RAINBOW 13
+#define ANIM_COLORFULL_RAIN 14
+#define ANIM_COLORFULL_SPARKLE 15
 
-#define GIF_PONG 9
-#define GIF_SPIRAL 9
-#define SPIRAL 9
-#define WARNING 9
+#define ANIM_GIF_CHECK_BLUE 16
+#define ANIM_GIF_PONG 17
+#define ANIM_GIF_WARNING 18
+#define ANIM_GIF_SPIRAL 19
+#define ANIM_GIF_RAINBOW 20
+#define ANIM_GIF_PSY 21
 
-uint8_t pattern = 1;
+
+uint8_t pattern = ANIM_DIAGONAL_RAINBOW;
 uint8_t patternOld = 0;
 uint8_t bpm = 120;
 bool animDone = false; 

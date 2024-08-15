@@ -18,6 +18,7 @@ CRGB leds[NUM_STRIPS][72];
 unsigned long lastPotReadTime = 0;
 const unsigned long potReadInterval = 100;
 long oldTime = 0;
+long oldTimeButton = 0;
 
 int something = 0;    // Current animation state
 int currentStep = 0;  // Current step in the animation
@@ -26,12 +27,10 @@ void setup() {
   Serial.begin(115200);
 
   // ------------- SHUTDOWN ---------------
-  // pinMode(shutdownPin, OUTPUT);
+  pinMode(POT_PIN, INPUT);
   // digitalWrite(shutdownPin, LOW);
 
   // ------------- MOTOR ---------------
-  // pinMode(MOTOR_PIN, OUTPUT);
-  // digitalWrite(MOTOR_PIN, LOW);
 
   // ------------- NEOPIXEL ---------------
   FastLED.addLeds<NEOPIXEL, D10>(leds[1], SIZE_ANIM);
@@ -50,9 +49,12 @@ void setup() {
   // esp_now_register_recv_cb(data_received);
 }
 
+bool turnOnTheLight = false;
+
 void loop() {
   //updateBrightness();
   //readBatteryVoltage();
+
 
   switch (something) {
     case 0:
@@ -75,16 +77,38 @@ void loop() {
   FastLED.show();
 }
 
+bool stopLight = false;
+
 void allWhiteStep(CRGB color) {
   long currentTime = millis();
 
-  if (currentTime - oldTime > 40) {
-    oldTime = currentTime;
-    float barCycleTime = (60000 / 120) * (4);
-    float phase = (float)(currentTime % (uint32_t)barCycleTime) / barCycleTime;
-    uint8_t j = (uint8_t)((sin(phase * 2 * 3.14159265359)) * (255));
-    for (uint16_t i = 0; i < 200; i++) {
-      leds[1][i] = CHSV(j, 255, 255);
+  if (turnOnTheLight) {
+    if (currentTime - oldTime > 40) {
+      stopLight = false;
+      oldTime = currentTime;
+      float barCycleTime = (60000 / 120) * (4);
+      float phase = (float)(currentTime % (uint32_t)barCycleTime) / barCycleTime;
+      uint8_t j = (uint8_t)((sin(phase * 2 * 3.14159265359)) * (255));
+      for (uint16_t i = 0; i < 200; i++) {
+        leds[1][i] = CHSV(j, 255, 40);
+      }
+    }
+  } else {
+    if (currentTime - oldTime > 40) {
+      oldTime = currentTime;
+      for (uint16_t i = 0; i < 200; i++) {
+        leds[1][i] = CRGB(0, 0, 0);
+      }
+    }
+  }
+
+  if (currentTime - oldTimeButton > 1000) {
+    Serial.println(analogRead(POT_PIN));
+    int potValue = analogRead(POT_PIN);
+    oldTimeButton = currentTime;
+    if (potValue > 2000) {
+      Serial.println("PassInside");
+      turnOnTheLight = !turnOnTheLight;
     }
   }
   //FastLED.show();
