@@ -2,7 +2,7 @@
 #define PATTERN_VIEW_2_H
 
 void drawSelectedColor2() {
-  bool selected = (selectedAnim == EASY);
+  bool selected = (selectedAnim == ANIM_COLOR_FULL);
   sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
   sprite.drawRoundRect(M_0, SECOND_LINE, SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
   sprite.fillRoundRect(M_0 + GAP, SECOND_LINE + GAP, SMALL_INSIDE_SIZE, SMALL_INSIDE_SIZE, 8, colorSelected);
@@ -15,7 +15,7 @@ void drawAlertColorAnim2() {
 
   uint16_t interpolatedColor = interpolateColor(blackColor, colorSelected, t);
 
-  boolean selected = (selectedAnim == ALERT);
+  boolean selected = (selectedAnim == ANIM_ALERT_COLOR_FULL);
   sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
   sprite.drawRoundRect(M_0 + SMALL_BUTTON_SIZE + SPACE, SECOND_LINE, SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
   sprite.fillRoundRect(M_0 + SMALL_BUTTON_SIZE + SPACE + GAP, SECOND_LINE + GAP, SMALL_INSIDE_SIZE, SMALL_INSIDE_SIZE, 8, interpolatedColor);
@@ -28,7 +28,7 @@ void drawVerticalBarColorAnim2() {
 
   sprite.fillRoundRect(barPositionX, SECOND_LINE + GAP, 4, SMALL_INSIDE_SIZE, 2, colorSelected);
 
-  boolean selected = (selectedAnim == SWEEP_VERTICAL_BAR);
+  boolean selected = (selectedAnim == ANIM_VERTICAL_RAINBOW);
   sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
   
   sprite.drawRoundRect(M_0 + (SMALL_BUTTON_SIZE + SPACE) * 2, SECOND_LINE, SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
@@ -41,7 +41,7 @@ void drawHorizontalBarColorAnim2() {
 
   sprite.fillRoundRect(M_0 + (SMALL_BUTTON_SIZE + SPACE) * 3 + GAP, barPositionY, SMALL_INSIDE_SIZE, 4, 2, colorSelected);
 
-  boolean selected = (selectedAnim == SWEEP_HORIZONTAL_BAR);
+  boolean selected = (selectedAnim == ANIM_HORIZONTAL_RAINBOW);
   sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
   
   sprite.drawRoundRect(M_0 + (SMALL_BUTTON_SIZE + SPACE) * 3, SECOND_LINE, SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
@@ -57,7 +57,7 @@ void drawDiagonalBarColorAnim2() {
 
   sprite.drawLine(startX + 2, endY - 2, endX - 2, startY + 2, colorSelected);
 
-  boolean selected = (selectedAnim == SWEEP_DIAGONAL_BAR);
+  boolean selected = (selectedAnim == ANIM_DIAGONAL_RAINBOW);
   sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
 
   sprite.drawRoundRect(M_0 + (SMALL_BUTTON_SIZE + SPACE) * 4, SECOND_LINE, SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
@@ -77,7 +77,7 @@ void drawCircularBarColorAnim2() {
     sprite.drawPixel(x, y, colorSelected);
   }
 
-  boolean selected = (selectedAnim == SWEEP_CIRCULAR_BAR);
+  boolean selected = (selectedAnim == ANIM_CIRCLE_RAINBOW);
   sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
 
   sprite.drawRoundRect(M_0 + (SMALL_BUTTON_SIZE + SPACE) * 5, SECOND_LINE, SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);
@@ -99,7 +99,7 @@ void drawCrossBarColorAnim2() {
   sprite.drawLine(endX - 2, startY + 2, startX + 2, endY - 2, colorSelected);
 
   // Set text color based on selection
-  boolean selected = (selectedAnim == SWEEP_CROSS_BAR);
+  boolean selected = (selectedAnim == ANIM_COLORFULL_RAIN);
   sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
 
   // Draw a rounded rectangle around the button
@@ -118,7 +118,7 @@ void drawZigZagBarColorAnim2() {
   sprite.drawLine(zigzagPositionX, startY, zigzagPositionX, zigzagPositionY, colorSelected);
   sprite.drawLine(zigzagPositionX, zigzagPositionY, zigzagPositionX + (SMALL_INSIDE_SIZE / 2), zigzagPositionY + (0.6 > 0.5 ? -1 : 1) * (SMALL_INSIDE_SIZE / 2), colorSelected);
 
-  boolean selected = (selectedAnim == SWEEP_ZIGZAG_BAR);
+  boolean selected = (selectedAnim == ANIM_COLORFULL_SPARKLE);
   sprite.setTextColor(selected ? TFT_BLACK : TFT_WHITE, selected ? TFT_WHITE : TFT_BLACK);
 
   sprite.drawRoundRect(M_0 + (SMALL_BUTTON_SIZE + SPACE) * 7, SECOND_LINE, SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE, 8, (selected) ? TFT_RED : TFT_WHITE);

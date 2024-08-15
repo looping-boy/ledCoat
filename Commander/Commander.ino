@@ -134,7 +134,7 @@ void loop() {
       beatMillis = currentTime;
       x++;
       uint8_t messageType = MESSAGE_TYPE_PATTERN;
-      sendValue(messageType, x % 4 + 1);
+      sendValue(messageType, x % 16 + 1);
       delay(2);
     }
   }

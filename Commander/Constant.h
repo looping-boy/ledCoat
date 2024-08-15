@@ -118,14 +118,25 @@ uint8_t backLight = 50;
 
 
 // PATTERNS 
-#define EASY                         0
-#define ALERT                        1
-#define SWEEP_VERTICAL_BAR           2
-#define SWEEP_HORIZONTAL_BAR         3
-#define SWEEP_DIAGONAL_BAR           4
-#define SWEEP_ZIGZAG_BAR             5
-#define SWEEP_CIRCULAR_BAR           6
-#define SWEEP_CROSS_BAR              7
+#define ANIM_STATIC_FULL 0
+#define ANIM_ALERT_FULL 1
+#define ANIM_VERTICAL_LINE 2
+#define ANIM_HORIZONTAL_LINE 3
+#define ANIM_DIAGONAL_LINE 4
+#define ANIM_CIRCLE_LINE 5
+#define ANIM_CROSS_VERTICAL_LINE 6
+#define ANIM_CROSS_HORIZONTAL_LINE 7
+
+#define ANIM_COLOR_FULL 8
+#define ANIM_ALERT_COLOR_FULL 9
+#define ANIM_VERTICAL_RAINBOW 10
+#define ANIM_HORIZONTAL_RAINBOW 11
+#define ANIM_DIAGONAL_RAINBOW 12
+#define ANIM_CIRCLE_RAINBOW 13
+#define ANIM_COLORFULL_RAIN 14
+#define ANIM_COLORFULL_SPARKLE 15
+
+#define ANIM_COLOR_PULSE 16
 
 
 #endif

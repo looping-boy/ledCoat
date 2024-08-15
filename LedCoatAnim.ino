@@ -1,4 +1,5 @@
 #include <FastLED.h>
+#include <math.h>
 #include "Constant.h"
 #include "ESPReceiver.h"
 #include "LedMap.h"
@@ -38,14 +39,25 @@ void setup() {
 }
 
 
-#define FULL 1
-#define FULL_VERTICAL 2
-#define FULL_HORIZONTAL 3
-#define FULL_DIAGONAL 4
-#define FULL_CIRCLE 5
-#define FULL_TRIANGLE 6
-#define FULL_ALARM 7
+#define ANIM_STATIC_FULL 0
+#define ANIM_ALERT_FULL 1
+#define ANIM_VERTICAL_LINE 2
+#define ANIM_HORIZONTAL_LINE 3
+#define ANIM_DIAGONAL_LINE 4
+#define ANIM_CIRCLE_LINE 5
+#define ANIM_CROSS_VERTICAL_LINE 6
+#define ANIM_CROSS_HORIZONTAL_LINE 7
 
+#define ANIM_COLOR_FULL 8
+#define ANIM_ALERT_COLOR_FULL 9
+#define ANIM_VERTICAL_RAINBOW 10
+#define ANIM_HORIZONTAL_RAINBOW 11
+#define ANIM_DIAGONAL_RAINBOW 12
+#define ANIM_CIRCLE_RAINBOW 13
+#define ANIM_COLORFULL_RAIN 14
+#define ANIM_COLORFULL_SPARKLE 15
+
+#define ANIM_COLOR_PULSE 16
 #define RAIN_CHOOSE_HUE 8
 #define PULSE_CHOOSE_HUE_1 9
 #define PULSE_CHOOSE_HUE_2 10
@@ -72,32 +84,88 @@ void loop() {
   if (patternOld != pattern) {
     FastLED.clear();
     patternOld = pattern;
-    pulseDone = false; 
-    startAnimationTime = millis();
+    animDone = false; 
+    startAnimationTime = millis(); // Need if you need to stuck on BPM the start.
   }
 
   unsigned long currentTime = millis();
 
+  FastLED.clear();
   switch (pattern) {
-    case 0:
-      upLine(currentTime, startAnimationTime);
+    // FIRST LINE
+    case ANIM_STATIC_FULL:
+      animFullStatic();
       break;
-    case 1:
-      myMatrixRain(currentTime, startAnimationTime);
+    case ANIM_ALERT_FULL:
+      animAlertFull(currentTime);
       break;
-    case 2:
-      rainbowCycle(currentTime, startAnimationTime);
+    case ANIM_VERTICAL_LINE:
+      animRightLine(currentTime, startAnimationTime);
       break;
-    case 3:
-      colorfulSparkle();
+    case ANIM_HORIZONTAL_LINE:
+      animDownLine(currentTime, startAnimationTime);
       break;
-    case 4:
-      bigTempoPulse(currentTime, startAnimationTime);
+    case ANIM_DIAGONAL_LINE:
+      animDiagonalLine(currentTime, startAnimationTime);
+      break;
+    case ANIM_CIRCLE_LINE:
+      animCircleLine(currentTime, startAnimationTime);
+      break;
+    case ANIM_CROSS_VERTICAL_LINE:
+      animRightLine(currentTime, startAnimationTime);
+      animDownLine(currentTime, startAnimationTime);
+      break;
+    case ANIM_CROSS_HORIZONTAL_LINE:
+      animUpLine(currentTime, startAnimationTime);
+      animLeftLine(currentTime, startAnimationTime);
+      break;
+
+    // SECOND LINE
+    case ANIM_COLOR_FULL:
+      animColorFull(currentTime, startAnimationTime);
+      break;
+    case ANIM_ALERT_COLOR_FULL:
+      animAlertColorFull(currentTime, startAnimationTime);
+      break;
+    case ANIM_VERTICAL_RAINBOW:
+      animVerticalRainbow(currentTime, startAnimationTime);  
+      break;
+    case ANIM_HORIZONTAL_RAINBOW:
+      animHorizontalRainbow(currentTime, startAnimationTime);  
+      break;
+    case ANIM_DIAGONAL_RAINBOW:
+      animDiagonalRainbow(currentTime, startAnimationTime);  
+      break;
+    case ANIM_CIRCLE_RAINBOW:
+      animCircleRainbow(currentTime, startAnimationTime);  
+      break;
+    case ANIM_COLORFULL_RAIN:
+      animColorfulRain(currentTime, startAnimationTime); 
+      break;
+    case ANIM_COLORFULL_SPARKLE:
+      animColorfulSparkle();  
+      break;
+    case ANIM_COLOR_PULSE:
+      //colorPulse(currentTime);  
+      break;
+    default:
+      FastLED.clear();  
       break;
   }
+  FastLED.show();
 
-  
 }
+
+    //   break;
+    // default:
+    //   fullGradientVertical(currentTime, startAnimationTime);
+    //   leftLine(currentTime, startAnimationTime);
+    //   upLine(currentTime, startAnimationTime);
+    //   bigTempoPulse(currentTime, startAnimationTime);
+    //   colorfulSparkle();
+    //   rainbowCycle(currentTime, startAnimationTime);
+    //   myMatrixRain(currentTime, startAnimationTime);
+    //   break;
 
 
   // rainbowCycle(1);

@@ -3,7 +3,7 @@
 
 #include "ESPSender.h"
 
-uint8_t selectedAnim = EASY;
+uint8_t selectedAnim = ANIM_DIAGONAL_LINE;
 
 void drawForceBrightnessButton();
 void drawColorBar();
@@ -151,9 +151,7 @@ void handleColorTabClick(int x, int y) {
       sendValue(MESSAGE_TYPE_BRIGHTNESS, opacitySelected);
     } else if (y >= M_20 + TAB_WIDTH - OPACITY_BAR_SHORTER + SPACE && y < M_20 + TAB_WIDTH - OPACITY_BAR_SHORTER + SPACE + FORCE_BUTTON_WIDTH) {
       isForcedBrightness = !isForcedBrightness;
-      if (isForcedBrightness) {
-        sendValue(MESSAGE_TYPE_FORCE_BRIGHTNESS, (isForcedBrightness) ? 1 : 0);
-      }
+      sendValue(MESSAGE_TYPE_FORCE_BRIGHTNESS, (isForcedBrightness) ? 1 : 0);
     }
     drawColorPickerView();
   } 

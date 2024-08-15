@@ -22,86 +22,66 @@ void drawPatternView() {
 }
 
 void handlePatternViewClick(int x, int y) {
+  
   if (x >= TAB_HEIGHT + SPACE && x < TAB_HEIGHT + SPACE + SMALL_BUTTON_SIZE) {
     if (y >= M_0 && y < M_0 + SMALL_BUTTON_SIZE) {
-      selectedAnim = EASY;
-      sendValue(MESSAGE_TYPE_PATTERN, EASY);
+      selectedAnim = ANIM_STATIC_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) && y < M_0 + SPACE + SMALL_BUTTON_SIZE * 2) {
-      selectedAnim = ALERT;
-      sendValue(MESSAGE_TYPE_PATTERN, ALERT);
+      selectedAnim = ANIM_ALERT_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 2 && y < M_0 + SPACE * 2 + SMALL_BUTTON_SIZE * 3) {
-      selectedAnim = SWEEP_VERTICAL_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_VERTICAL_BAR);
+      selectedAnim = ANIM_VERTICAL_LINE;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 3 && y < M_0 + SPACE * 3 + SMALL_BUTTON_SIZE * 4) {
-      selectedAnim = SWEEP_HORIZONTAL_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_HORIZONTAL_BAR);
+      selectedAnim = ANIM_HORIZONTAL_LINE;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 4 && y < M_0 + SPACE * 4 + SMALL_BUTTON_SIZE * 5) {
-      selectedAnim = SWEEP_DIAGONAL_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_DIAGONAL_BAR);
+      selectedAnim = ANIM_DIAGONAL_LINE;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 5 && y < M_0 + SPACE * 5 + SMALL_BUTTON_SIZE * 6) {
-      selectedAnim = SWEEP_CIRCULAR_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_CIRCULAR_BAR);
+      selectedAnim = ANIM_CIRCLE_LINE;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 6 && y < M_0 + SPACE * 6 + SMALL_BUTTON_SIZE * 7) {
-      selectedAnim = SWEEP_CROSS_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_CROSS_BAR);
+      selectedAnim = ANIM_CROSS_VERTICAL_LINE;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 7 && y < M_0 + SPACE * 7 + SMALL_BUTTON_SIZE * 8) {
-      selectedAnim = SWEEP_ZIGZAG_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_ZIGZAG_BAR);
+      selectedAnim = ANIM_CROSS_HORIZONTAL_LINE;
     }
+    sendValue(MESSAGE_TYPE_PATTERN, selectedAnim);
     drawPatternLine1();
   } else if (x >= SECOND_LINE && x < SECOND_LINE + SMALL_BUTTON_SIZE){
     if (y >= M_0 && y < M_0 + SMALL_BUTTON_SIZE) {
-      selectedAnim = EASY;
-      sendValue(MESSAGE_TYPE_PATTERN, EASY);
+      selectedAnim = ANIM_COLOR_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) && y < M_0 + SPACE + SMALL_BUTTON_SIZE * 2) {
-      selectedAnim = ALERT;
-      sendValue(MESSAGE_TYPE_PATTERN, ALERT);
+      selectedAnim = ANIM_ALERT_COLOR_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 2 && y < M_0 + SPACE * 2 + SMALL_BUTTON_SIZE * 3) {
-      selectedAnim = SWEEP_VERTICAL_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_VERTICAL_BAR);
+      selectedAnim = ANIM_VERTICAL_RAINBOW;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 3 && y < M_0 + SPACE * 3 + SMALL_BUTTON_SIZE * 4) {
-      selectedAnim = SWEEP_HORIZONTAL_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_HORIZONTAL_BAR);
+      selectedAnim = ANIM_HORIZONTAL_RAINBOW;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 4 && y < M_0 + SPACE * 4 + SMALL_BUTTON_SIZE * 5) {
-      selectedAnim = SWEEP_DIAGONAL_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_DIAGONAL_BAR);
+      selectedAnim = ANIM_DIAGONAL_RAINBOW;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 5 && y < M_0 + SPACE * 5 + SMALL_BUTTON_SIZE * 6) {
-      selectedAnim = SWEEP_CIRCULAR_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_CIRCULAR_BAR);
+      selectedAnim = ANIM_CIRCLE_RAINBOW;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 6 && y < M_0 + SPACE * 6 + SMALL_BUTTON_SIZE * 7) {
-      selectedAnim = SWEEP_CROSS_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_CROSS_BAR);
+      selectedAnim = ANIM_COLORFULL_RAIN;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 7 && y < M_0 + SPACE * 7 + SMALL_BUTTON_SIZE * 8) {
-      selectedAnim = SWEEP_ZIGZAG_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_ZIGZAG_BAR);
+      selectedAnim = ANIM_COLORFULL_SPARKLE;
     }
+    sendValue(MESSAGE_TYPE_PATTERN, selectedAnim);
     drawPatternLine2();
   } else if (x >= THIRD_LINE && x < THIRD_LINE + SMALL_BUTTON_SIZE){
     if (y >= M_0 && y < M_0 + SMALL_BUTTON_SIZE) {
-      selectedAnim = EASY;
-      sendValue(MESSAGE_TYPE_PATTERN, EASY);
+      selectedAnim = ANIM_COLOR_PULSE;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) && y < M_0 + SPACE + SMALL_BUTTON_SIZE * 2) {
-      selectedAnim = ALERT;
-      sendValue(MESSAGE_TYPE_PATTERN, ALERT);
+      selectedAnim = ANIM_COLOR_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 2 && y < M_0 + SPACE * 2 + SMALL_BUTTON_SIZE * 3) {
-      selectedAnim = SWEEP_VERTICAL_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_VERTICAL_BAR);
+      selectedAnim = ANIM_COLOR_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 3 && y < M_0 + SPACE * 3 + SMALL_BUTTON_SIZE * 4) {
-      selectedAnim = SWEEP_HORIZONTAL_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_HORIZONTAL_BAR);
+      selectedAnim = ANIM_COLOR_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 4 && y < M_0 + SPACE * 4 + SMALL_BUTTON_SIZE * 5) {
-      selectedAnim = SWEEP_DIAGONAL_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_DIAGONAL_BAR);
+      selectedAnim = ANIM_COLOR_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 5 && y < M_0 + SPACE * 5 + SMALL_BUTTON_SIZE * 6) {
-      selectedAnim = SWEEP_CIRCULAR_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_CIRCULAR_BAR);
+      selectedAnim = ANIM_COLOR_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 6 && y < M_0 + SPACE * 6 + SMALL_BUTTON_SIZE * 7) {
-      selectedAnim = SWEEP_CROSS_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_CROSS_BAR);
+      selectedAnim = ANIM_COLOR_FULL;
     } else if (y >= M_0 + (SMALL_BUTTON_SIZE + SPACE) * 7 && y < M_0 + SPACE * 7 + SMALL_BUTTON_SIZE * 8) {
-      selectedAnim = SWEEP_ZIGZAG_BAR;
-      sendValue(MESSAGE_TYPE_PATTERN, SWEEP_ZIGZAG_BAR);
+      selectedAnim = ANIM_COLOR_FULL;
     }
+    sendValue(MESSAGE_TYPE_PATTERN, selectedAnim);
     drawPatternLine3();
   }
 }

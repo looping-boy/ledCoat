@@ -39,10 +39,10 @@ CRGB leds[NUM_STRIPS][500];
 uint8_t pattern = 1;
 uint8_t patternOld = 0;
 uint8_t bpm = 120;
-bool pulseDone = false; 
+bool animDone = false; 
 long bpmUpdateTime = 0;
 long startAnimationTime = millis();
-uint16_t hue = 200;
+uint8_t hue = 200;
 
 
 // SETUP BLUE WATER ANIM
