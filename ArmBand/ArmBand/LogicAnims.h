@@ -37,33 +37,86 @@ void animDownLine(long currentTime, long startAnimationTime) {
   //} 
 }
 
-void animVerticalRainbow(long currentTime, long startAnimationTime) {
-  // Calcul de la durée d'un cycle complet pour la barre
-  float barCycleTime = ((60000 / bpm)) * (tweakBPM / 4);
-
-  // Calcul de la position actuelle de la barre en fonction du temps
+void animRightLine(long currentTime, long startAnimationTime) {
+  float barCycleTime = ((60000 / bpm)) * (tweakBPM / 8);
   uint8_t j = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
-
-  // Luminosité réduite pour la barre
   uint8_t lowerBrightness = (uint8_t)(brightness * 0.5);
 
-  // Boucle sur chaque ligne de la matrice LED
   for (int row = 0; row < totalLine; row++) {
     int index;
-
-    // Calcul de l'index de la LED à allumer en fonction du motif zigzag
     if (row % 2 == 0) {
-      index = row * (totalColumn - 1) + j;  // Ligne paire (gauche à droite)
+      index = row * (totalColumn - 1) + j;
     } else {
-      index = row * (totalColumn - 1) + (totalColumn - 1 - j);  // Ligne impaire (droite à gauche)
+      index = row * (totalColumn - 1) + (totalColumn - 1 - j);
     }
-
-    // Affecter la couleur à l'index calculé
     leds[1][index] = CHSV(hue, 255, lowerBrightness);
   }
+}
 
-  // Affichage des LEDs
-  FastLED.show();
+void animLeftLine(long currentTime, long startAnimationTime) {
+  float barCycleTime = ((60000 / bpm)) * (tweakBPM / 8);
+  uint8_t j = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
+  uint8_t lowerBrightness = (uint8_t)(brightness * 0.5);
+
+  for (int row = 0; row < totalLine; row++) {
+    int index;
+    if (row % 2 == 1) {
+      index = row * (totalColumn - 1) + j;
+    } else {
+      index = row * (totalColumn - 1) + (totalColumn - 1 - j);
+    }
+    leds[1][index] = CHSV(hue, 255, lowerBrightness);
+  }
+}
+
+void animHorizontalRainbow(long currentTime, long startAnimationTime) {
+  float barCycleTime = (float) (((60000 / bpm)) * (tweakBPM / 8));
+  uint8_t j = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
+  uint8_t hueMoving = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255 / barCycleTime);
+  uint8_t lowerBrightness = (uint8_t)(brightness * 0.5);
+  uint8_t hueStep = 255 / (totalLine * totalColumn - 1);
+
+  for (int row = 0; row < totalLine; row++) {
+    for (int col = 0; col < totalColumn; col++) {
+      int index;
+      if (row % 2 == 0) {
+        index = row * (totalColumn) + col;  // Normal order for even rows
+      } else {
+        index = row * (totalColumn) + (totalColumn - 1 - col);  // Reversed order for odd rows
+      }
+
+      // Calculate the hue for the current LED
+      uint8_t currentHue = hueStep * (row * totalColumn + col);
+
+      // Set the color with the gradient hue
+      leds[1][index] = CHSV((currentHue + hueMoving) & 255, 255, brightness);
+    }
+  }
+}
+
+void animVerticalRainbow(long currentTime, long startAnimationTime) {
+  float barCycleTime = (float) (((60000 / bpm)) * (tweakBPM / 8));
+  uint8_t j = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
+  uint8_t hueMoving = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255 / barCycleTime);
+  uint8_t lowerBrightness = (uint8_t)(brightness * 0.5);
+  uint8_t hueStep = 255 / (totalLine * totalColumn - 1);
+
+  for (int row = 0; row < totalLine; row++) {
+    for (int col = 0; col < totalColumn; col++) {
+      int index;
+      if (row % 2 == 0) {
+        index = row * (totalColumn) + col;  // Normal order for even rows
+      } else {
+        index = row * (totalColumn) + (totalColumn - 1 - col);  // Reversed order for odd rows
+      }
+
+      // Calculate the hue for the current LED
+      uint8_t currentHue = hueStep * (col * totalLine + row);
+
+      // Set the color with the gradient hue
+      leds[1][index] = CHSV((currentHue + hueMoving) & 255, 255, brightness);
+    }
+  }
 }
 
 #endif

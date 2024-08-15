@@ -94,10 +94,10 @@ void loop() {
       animAlertFull(currentTime);
       break;
     case ANIM_VERTICAL_LINE:
-      //animRightLine(currentTime, startAnimationTime);
+      animLeftLine(currentTime, startAnimationTime);
       break;
     case ANIM_HORIZONTAL_LINE:
-      animVerticalRainbow(currentTime, startAnimationTime);
+      animHorizontalRainbow(currentTime, startAnimationTime);
       break;
     default:
       FastLED.clear();
