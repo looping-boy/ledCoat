@@ -180,26 +180,32 @@ void handleUnTouch(int x, int y, unsigned long currentTime) {
     if (activeButton == 1) {  // VIEW 1
       if (virtualY >= 20 && virtualY < 20 + 80) {
         if (virtualX >= STICKY_BAR_HEIGHT + 30 && virtualX < STICKY_BAR_HEIGHT + 30 + 30) {
-          switch1 = !switch1;
+          switch1 = (switch1 + 1) % 3;
+          sendValueToDevice(GREEN_ARM, switch1);
           redrawView1();
         } else if (virtualX >= STICKY_BAR_HEIGHT + 30 + 60 && virtualX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
-          switch4 = !switch4;
+          switch4 = (switch4 + 1) % 3;
+          sendValueToDevice(BLACK_HEADBAND, switch4);
           redrawView1();
         }
       } else if (virtualY >= SPACE_BETWEEN_SWITCH + 20 && virtualY < SPACE_BETWEEN_SWITCH + 20 + 80) {
         if (virtualX >= STICKY_BAR_HEIGHT + 30 && virtualX < STICKY_BAR_HEIGHT + 30 + 30) {
-          switch2 = !switch2;
+          switch2 = (switch2 + 1) % 3;
+          sendValueToDevice(BLACK_FEET, switch2);
           redrawView1();
         } else if (virtualX >= STICKY_BAR_HEIGHT + 30 + 60 && virtualX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
-          switch5 = !switch5;
+          switch5 = (switch5 + 1) % 3;
+          sendValueToDevice(PURPLE_FEET, switch5);
           redrawView1();
         }
       } else if (virtualY >= SPACE_BETWEEN_SWITCH * 2 + 20 && virtualY < SPACE_BETWEEN_SWITCH * 2 + 20 + 80) {
         if (virtualX >= STICKY_BAR_HEIGHT + 30 && virtualX < STICKY_BAR_HEIGHT + 30 + 30) {
-          switch3 = !switch3;
+          switch3 = (switch3 + 1) % 3;
+          sendValueToDevice(RED_ARM, switch3);
           redrawView1();
         } else if (virtualX >= STICKY_BAR_HEIGHT + 30 + 60 && virtualX < STICKY_BAR_HEIGHT + 30 + 30 + 60) {
-          switch6 = !switch6;
+          switch6 = (switch6 + 1) % 3;
+          sendValueToDevice(WHITE, switch6);
           redrawView1();
         }
       }

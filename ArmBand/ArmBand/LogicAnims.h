@@ -25,22 +25,19 @@ void animAlertFull(long currentTime) {
   }
 }
 
-void animDownLine(long currentTime, long startAnimationTime) {
+void animDownLine(long currentTime) {
   float barCycleTime = (60000 / bpm) * (tweakBPM / 16) * tweakPhase;
-  uint8_t pulseBrightness = (uint8_t) brightness * 1.5;
+  uint8_t pulseBrightness = (uint8_t) min(brightness * 1.5, 255.0);
   // Iterate over two or more
-  //for (int phase = 0; phase < tweakPhase; phase++) {
-    //uint8_t pos = (uint8_t)(((((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * totalLine) / barCycleTime) + (phase * (totalLine / tweakPhase))) % totalLine;
-    for (int k = 24; k < 48; k++) {
-        leds[1][k] = CHSV(200, 255, 255);
-    }
-  //} 
+  for (int k = 24; k < 48; k++) {
+      leds[1][k] = CHSV(200, 255, pulseBrightness);
+  }
 }
 
-void animRightLine(long currentTime, long startAnimationTime) {
+void animRightLine(long currentTime) {
   float barCycleTime = ((60000 / bpm)) * (tweakBPM / 8);
-  uint8_t j = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
-  uint8_t lowerBrightness = (uint8_t)(brightness * 0.5);
+  uint8_t j = (uint8_t)(((currentTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
+  uint8_t pulseBrightness = (uint8_t) min(brightness * 1.5, 255.0);
 
   for (int row = 0; row < totalLine; row++) {
     int index;
@@ -49,14 +46,14 @@ void animRightLine(long currentTime, long startAnimationTime) {
     } else {
       index = row * (totalColumn - 1) + (totalColumn - 1 - j);
     }
-    leds[1][index] = CHSV(hue, 255, lowerBrightness);
+    leds[1][index] = CHSV(hue, 255, pulseBrightness);
   }
 }
 
-void animLeftLine(long currentTime, long startAnimationTime) {
+void animLeftLine(long currentTime) {
   float barCycleTime = ((60000 / bpm)) * (tweakBPM / 8);
-  uint8_t j = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
-  uint8_t lowerBrightness = (uint8_t)(brightness * 0.5);
+  uint8_t j = (uint8_t)(((currentTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
+  uint8_t pulseBrightness = (uint8_t) min(brightness * 1.5, 255.0);
 
   for (int row = 0; row < totalLine; row++) {
     int index;
@@ -65,39 +62,35 @@ void animLeftLine(long currentTime, long startAnimationTime) {
     } else {
       index = row * (totalColumn - 1) + (totalColumn - 1 - j);
     }
-    leds[1][index] = CHSV(hue, 255, lowerBrightness);
+    leds[1][index] = CHSV(hue, 255, pulseBrightness);
   }
 }
 
-void animHorizontalRainbow(long currentTime, long startAnimationTime) {
+void animHorizontalRainbow(long currentTime) {
   float barCycleTime = (float) (((60000 / bpm)) * (tweakBPM / 8));
-  uint8_t j = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
-  uint8_t hueMoving = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255 / barCycleTime);
-  uint8_t lowerBrightness = (uint8_t)(brightness * 0.5);
-  uint8_t hueStep = 255 / (totalLine * totalColumn - 1);
+  uint8_t j = (uint8_t)((((currentTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime)) & 255;
+  uint8_t hueMoving = (uint8_t)((((currentTime) % (uint32_t)barCycleTime) * 255 / barCycleTime)) & 255;
+  uint8_t lowerBrightness = (uint8_t)((brightness * 0.5)) & 255;
+  uint8_t hueStep = (uint8_t) (255 / (totalLine * totalColumn - 1)) & 255;
 
   for (int row = 0; row < totalLine; row++) {
     for (int col = 0; col < totalColumn; col++) {
       int index;
       if (row % 2 == 0) {
-        index = row * (totalColumn) + col;  // Normal order for even rows
+        index = row * (totalColumn) + col;
       } else {
-        index = row * (totalColumn) + (totalColumn - 1 - col);  // Reversed order for odd rows
+        index = row * (totalColumn) + (totalColumn - 1 - col);
       }
-
-      // Calculate the hue for the current LED
       uint8_t currentHue = hueStep * (row * totalColumn + col);
-
-      // Set the color with the gradient hue
-      leds[1][index] = CHSV((currentHue + hueMoving) & 255, 255, brightness);
+      leds[1][index] = CHSV((currentHue + hueMoving) & 255, 255, lowerBrightness);
     }
   }
 }
 
-void animVerticalRainbow(long currentTime, long startAnimationTime) {
+void animVerticalRainbow(long currentTime) {
   float barCycleTime = (float) (((60000 / bpm)) * (tweakBPM / 8));
-  uint8_t j = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
-  uint8_t hueMoving = (uint8_t)(((currentTime - startAnimationTime) % (uint32_t)barCycleTime) * 255 / barCycleTime);
+  uint8_t j = (uint8_t)(((currentTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime);
+  uint8_t hueMoving = (uint8_t)(((currentTime) % (uint32_t)barCycleTime) * 255 / barCycleTime);
   uint8_t lowerBrightness = (uint8_t)(brightness * 0.5);
   uint8_t hueStep = 255 / (totalLine * totalColumn - 1);
 
@@ -105,16 +98,39 @@ void animVerticalRainbow(long currentTime, long startAnimationTime) {
     for (int col = 0; col < totalColumn; col++) {
       int index;
       if (row % 2 == 0) {
-        index = row * (totalColumn) + col;  // Normal order for even rows
+        index = row * (totalColumn) + col;
       } else {
-        index = row * (totalColumn) + (totalColumn - 1 - col);  // Reversed order for odd rows
+        index = row * (totalColumn) + (totalColumn - 1 - col);
       }
 
-      // Calculate the hue for the current LED
       uint8_t currentHue = hueStep * (col * totalLine + row);
 
-      // Set the color with the gradient hue
-      leds[1][index] = CHSV((currentHue + hueMoving) & 255, 255, brightness);
+      leds[1][index] = CHSV((currentHue + hueMoving) & 255, 255, lowerBrightness);
+    }
+  }
+}
+
+void animVerticalRainbowSimple(long currentTime) {
+  float barCycleTime = (float) (((60000 / bpm)) * (tweakBPM / 8));
+  uint8_t j = (uint8_t)((((currentTime) % (uint32_t)barCycleTime) * totalColumn / barCycleTime)) & 255;
+  uint8_t hueMoving = (uint8_t)((((currentTime) % (uint32_t)barCycleTime) * 255 / barCycleTime)) & 255;
+  uint8_t lowerBrightness = (uint8_t)((brightness * 0.5)) & 255;
+  uint8_t hueStep = (uint8_t) (255 / (totalLine * totalColumn - 1)) & 255;
+
+  for (uint8_t row = 0; row < totalLine; row++) {
+    for (uint8_t col = 0; col < totalColumn; col++) {
+      uint8_t index;
+      if (row % 2 == 0) {
+        index = row * (totalColumn) + col;
+      } else {
+        index = row * (totalColumn) + (totalColumn - 1 - col);
+      }
+
+      uint8_t currentHue = hueStep * (col * totalLine + row);
+
+      if (index < 144) {
+        leds[1][index] = CHSV((currentHue + hueMoving) & 255, 255, lowerBrightness);
+      }
     }
   }
 }

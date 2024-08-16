@@ -8,28 +8,28 @@ void drawSwitchesView() {
   // UP
   sprite.drawString("SHOE 1", 20 - view1scrollY, STICKY_BAR_HEIGHT + 10, 2);
   sprite.drawRoundRect(20 - view1scrollY, STICKY_BAR_HEIGHT + 30, 80, 30, 15, TFT_GREEN);
-  sprite.fillRoundRect(20 - view1scrollY + (switch1 * 50), STICKY_BAR_HEIGHT + 30, 30, 30, 15, TFT_GREEN);
+  sprite.fillRoundRect(20 - view1scrollY + (switch1 * 25), STICKY_BAR_HEIGHT + 30, 30, 30, 15, TFT_GREEN);
 
   sprite.drawString("ARM 1", SPACE_BETWEEN_SWITCH + 20 - view1scrollY, STICKY_BAR_HEIGHT + 10, 2);
   sprite.drawRoundRect(SPACE_BETWEEN_SWITCH + 20 - view1scrollY, STICKY_BAR_HEIGHT + 30, 80, 30, 15, TFT_BLUE);
-  sprite.fillRoundRect(SPACE_BETWEEN_SWITCH + 20 - view1scrollY + (switch2 * 50), STICKY_BAR_HEIGHT + 30, 30, 30, 15, TFT_BLUE);
+  sprite.fillRoundRect(SPACE_BETWEEN_SWITCH + 20 - view1scrollY + (switch2 * 25), STICKY_BAR_HEIGHT + 30, 30, 30, 15, TFT_BLUE);
 
   sprite.drawString("COAT", SPACE_BETWEEN_SWITCH * 2 + 20 - view1scrollY, STICKY_BAR_HEIGHT + 10, 2);
   sprite.drawRoundRect(SPACE_BETWEEN_SWITCH * 2 + 20 - view1scrollY, STICKY_BAR_HEIGHT + 30, 80, 30, 15, TFT_RED);
-  sprite.fillRoundRect(SPACE_BETWEEN_SWITCH * 2 + 20 - view1scrollY + (switch3 * 50), STICKY_BAR_HEIGHT + 30, 30, 30, 15, TFT_RED);
+  sprite.fillRoundRect(SPACE_BETWEEN_SWITCH * 2 + 20 - view1scrollY + (switch3 * 25), STICKY_BAR_HEIGHT + 30, 30, 30, 15, TFT_RED);
 
   // DOWN
   sprite.drawString("SHOE 2", 20 - view1scrollY, STICKY_BAR_HEIGHT + 10 + 60, 2);
   sprite.drawRoundRect(20 - view1scrollY, STICKY_BAR_HEIGHT + 30 + 60, 80, 30, 15, TFT_YELLOW);
-  sprite.fillRoundRect(20 - view1scrollY + (switch4 * 50), STICKY_BAR_HEIGHT + 30 + 60, 30, 30, 15, TFT_YELLOW);
+  sprite.fillRoundRect(20 - view1scrollY + (switch4 * 25), STICKY_BAR_HEIGHT + 30 + 60, 30, 30, 15, TFT_YELLOW);
 
   sprite.drawString("ARM 2", SPACE_BETWEEN_SWITCH + 20 - view1scrollY, STICKY_BAR_HEIGHT + 10 + 60, 2);
   sprite.drawRoundRect(SPACE_BETWEEN_SWITCH + 20 - view1scrollY, STICKY_BAR_HEIGHT + 30 + 60, 80, 30, 15, TFT_PURPLE);
-  sprite.fillRoundRect(SPACE_BETWEEN_SWITCH + 20 - view1scrollY + (switch5 * 50), STICKY_BAR_HEIGHT + 30 + 60, 30, 30, 15, TFT_PURPLE);
+  sprite.fillRoundRect(SPACE_BETWEEN_SWITCH + 20 - view1scrollY + (switch5 * 25), STICKY_BAR_HEIGHT + 30 + 60, 30, 30, 15, TFT_PURPLE);
 
   sprite.drawString("HEAD-BAND", SPACE_BETWEEN_SWITCH * 2 + 20 - view1scrollY, STICKY_BAR_HEIGHT + 10 + 60, 2);
   sprite.drawRoundRect(SPACE_BETWEEN_SWITCH * 2 + 20 - view1scrollY, STICKY_BAR_HEIGHT + 30 + 60, 80, 30, 15, TFT_PINK);
-  sprite.fillRoundRect(SPACE_BETWEEN_SWITCH * 2 + 20 - view1scrollY + (switch6 * 50), STICKY_BAR_HEIGHT + 30 + 60, 30, 30, 15, TFT_PINK);
+  sprite.fillRoundRect(SPACE_BETWEEN_SWITCH * 2 + 20 - view1scrollY + (switch6 * 25), STICKY_BAR_HEIGHT + 30 + 60, 30, 30, 15, TFT_PINK);
 }
 
 void handleScrollingView1(int touchY, float deltaTime) {

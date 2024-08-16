@@ -77,12 +77,12 @@ int view1scrollY = 0;
 
 // State values
 int deb = 0;
-bool switch1 = true;
-bool switch2 = false;
-bool switch3 = true;
-bool switch4 = true;
-bool switch5 = false;
-bool switch6 = true;
+uint8_t switch1 = 0;
+uint8_t switch2 = 0;
+uint8_t switch3 = 0;
+uint8_t switch4 = 0;
+uint8_t switch5 = 0;
+uint8_t switch6 = 0;
 
 // Tweak view
 uint8_t tweak1 = 4;
@@ -147,6 +147,10 @@ uint8_t backLight = 50;
 uint8_t selectedAnims[MAX_ANIMS] = {ANIM_DIAGONAL_RAINBOW};
 uint8_t numSelectedAnims = 0;
 uint8_t inTheSelectedAnims = 0;
+
+#define LIGHT_DEVICE_WRIST 0 // Total 144, 6 x 23
+#define LIGHT_DEVICE_FEET 1  // Total 
+#define LIGHT_DEVICE_HEADBAND 2 // Total , 2 x
 
 
 #endif

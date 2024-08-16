@@ -39,7 +39,7 @@ CRGB leds[NUM_STRIPS][100];
 #define ANIM_GIF_RAINBOW 20
 #define ANIM_GIF_PSY 21
 
-uint8_t pattern = ANIM_HORIZONTAL_LINE;
+uint8_t pattern = ANIM_VERTICAL_RAINBOW;
 uint8_t patternOld = 0;
 uint8_t bpm = 120;
 bool animDone = false; 
@@ -63,8 +63,8 @@ long time1,time2,time3; // For TIME LOGS
 
 // FOR WRIST, HEADBAND, FEET :
 
-Preferences preferences;
-uint8_t lightDevice = 0;
+// Preferences preferences;
+uint8_t lightDevice = 2;
 
 #define LIGHT_DEVICE_WRIST 0 // Total 144, 6 x 23
 #define LIGHT_DEVICE_FEET 1  // Total 
@@ -76,8 +76,29 @@ uint8_t totalColumn = 24;
 #define NUM_STRIPS 4
 #define POT_PIN D0
 #define BATTERY_PIN D1
-#define SHUTDOWN_PIN D9
-#define MOTOR_PIN D10
+#define SHUTDOWN_PIN D10
+#define MOTOR_PIN D9
 #define LED_PIN D8
+
+void whichLightDevice() {
+  switch(lightDevice) {
+    case LIGHT_DEVICE_WRIST:
+      totalLine = 6;
+      totalColumn = 24;
+      break;
+    case LIGHT_DEVICE_FEET:
+      totalLine = 1;
+      totalColumn = 100;
+      break;
+    case LIGHT_DEVICE_HEADBAND:
+      totalLine = 2;
+      totalColumn = 72;
+      break;
+    default :
+      totalLine = 6;
+      totalColumn = 24;
+      break;
+  }
+}
 
 #endif 

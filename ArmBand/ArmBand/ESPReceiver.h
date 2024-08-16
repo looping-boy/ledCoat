@@ -42,9 +42,11 @@ void data_received(const uint8_t *mac, const uint8_t *incomingData, int len) {
             pattern = message.value;
             break;
         case MESSAGE_TYPE_LIGHT_DEVICE:
-            preferences.begin("my-app", false);  // Namespace "my-app", RW mode
-            preferences.putInt("lightDevice", message.value);  
-            preferences.end();  
+            // preferences.begin("my-app", false);  // Namespace "my-app", RW mode
+            // preferences.putInt("lightDevice", message.value);  
+            // preferences.end(); 
+            lightDevice = message.value;
+            whichLightDevice(); 
             break;
         case MESSAGE_TWEAK_QUANTITY:
             tweakQuantity = message.value;

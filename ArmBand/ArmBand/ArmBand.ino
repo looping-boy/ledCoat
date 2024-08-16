@@ -2,7 +2,7 @@
 #include <esp_now.h>
 #include <WiFi.h>
 #include <esp_wifi.h>
-#include <Preferences.h>
+// #include <Preferences.h>
 #include <math.h>
 #include "Constant.h"
 #include "ESPReceiver.h"
@@ -31,9 +31,9 @@ void setup() {
   updateBrightness();
 
   // ------------- SHARED PREFERENCE ---------------
-  preferences.begin("my-app", true);  // Open in read-only mode
-  lightDevice = preferences.getInt("lightDevice", 0);  // Retrieve the value, with a default of 0 if not found
-  preferences.end();
+  // preferences.begin("my-app", true);  // Open in read-only mode
+  // lightDevice = preferences.getInt("lightDevice", 0);  // Retrieve the value, with a default of 0 if not found
+  // preferences.end();
   whichLightDevice();
 
   // ------------- ESP NOW ---------------
@@ -41,52 +41,29 @@ void setup() {
   esp_wifi_set_promiscuous(true);
   esp_wifi_set_channel(WIFI_CHANNEL, WIFI_SECOND_CHAN_NONE);
   esp_wifi_set_promiscuous(false);
-  
+
   if (esp_now_init() != ESP_OK) {
     return;
   }
-  
+
   esp_now_register_recv_cb(data_received);
 }
 
-void whichLightDevice() {
-  switch(lightDevice) {
-    case LIGHT_DEVICE_WRIST:
-      totalLine = 6;
-      totalColumn = 24;
-      break;
-    case LIGHT_DEVICE_FEET:
-      totalLine = 1;
-      totalColumn = 100;
-      break;
-    case LIGHT_DEVICE_HEADBAND:
-      totalLine = 2;
-      totalColumn = 72;
-      break;
-    default :
-      break;
-  }
-}
-
 void loop() {
-  //seeIfNeedToShutdown((uint16_t) analogRead(BATTERY_PIN));
+  // unsigned long currentTime = millis();
+  // FastLED.clear();
+  // animVerticalRainbowSimple(currentTime);
+  // FastLED.show();
+  unsigned long currentTime = millis();
+
+  seeIfNeedToShutdown((uint16_t)analogRead(BATTERY_PIN));
 
   if (!isForcedBrightness) {
     updateBrightness();
   }
 
-  if (patternOld != pattern) {
-    FastLED.clear();
-    patternOld = pattern;
-    animDone = false;
-    startAnimationTime = millis();  // Need if you need to stuck on BPM the start.
-  }
-
-  unsigned long currentTime = millis();
-
   FastLED.clear();
   switch (pattern) {
-    // FIRST LINE
     case ANIM_STATIC_FULL:
       animFullStatic();
       break;
@@ -94,15 +71,22 @@ void loop() {
       animAlertFull(currentTime);
       break;
     case ANIM_VERTICAL_LINE:
-      animLeftLine(currentTime, startAnimationTime);
+      animLeftLine(currentTime);
       break;
     case ANIM_HORIZONTAL_LINE:
-      animHorizontalRainbow(currentTime, startAnimationTime);
+      animRightLine(currentTime);
+      break;
+    case ANIM_VERTICAL_RAINBOW:
+      animVerticalRainbowSimple(currentTime);
+      break;
+    case ANIM_HORIZONTAL_RAINBOW:
+      animHorizontalRainbow(currentTime);
       break;
     default:
-      FastLED.clear();
+      animVerticalRainbowSimple(currentTime);
       break;
   }
+  // animVerticalRainbow(currentTime, startAnimationTime);
   FastLED.show();
 }
 
@@ -128,7 +112,7 @@ void updateBrightness() {
 }
 
 int mapPotValueToBrightness(int potValue) {
-  float scale = (float)potValue / 3000.0; 
+  float scale = (float)potValue / 3000.0;
   float expBrightness = 10 + pow(scale, 2.5) * (MAX_BRIGHTNESS - 10);
   return constrain((int)expBrightness, 10, MAX_BRIGHTNESS - 1);
 }
