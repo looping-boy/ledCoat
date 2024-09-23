@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        // Function to convert RGBA color to a single integer
+        function rgbaToInt(r, g, b, a) {
+            return (r << 16) | (g << 8) | b;
+        }
+
+        // Function to convert pixel data to byte color table
+        function convertToByteColorTable(imageData) {
+            const byteColorTable = [];
+            for (let y = 0; y < imageData.height; y++) {
+                const row = [];
+                for (let x = 0; x < imageData.width; x++) {
+                    // Extract RGBA values from pixel data
+                    const index = (y * imageData.width + x) * 4;
+                    const r = imageData.data[index];
+                    const g = imageData.data[index + 1];
+                    const b = imageData.data[index + 2];
+                    const a = imageData.data[index + 3];
+                    // Convert RGBA to a single integer
+                    const byteColor = rgbaToInt(r, g, b, a);
+                    row.push(byteColor);
+                }
+                byteColorTable.push(row);
+            }
+            return byteColorTable;
+        }
+
+        // Load the GIF image
+        const img = new Image();
+        img.src = 'looping.gif';
+        img.onload = function () {
+            // Create a canvas element
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Draw the image onto the canvas
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+
+            // Get pixel data from the canvas
+            const imageData = ctx.getImageData(0, 0, img.width, img.height);
+
+            // Split the GIF into frames
+            const frames = [];
+            const frameDelay = 100; // Adjust as needed
+            let frameIndex = 0;
+            while (true) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                const frameData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                frames.push(frameData);
+                frameIndex++;
+                if (frameIndex === 4) break; // Extract the second frame
+                img.src = 'looping.gif#' + frameIndex;
+            }
+
+            // Convert pixel data of the second frame to byte color table
+            const byteColorTable = convertToByteColorTable(frames[3]);
+
+            console.log(byteColorTable);
+        };
+    </script>
+</body>
+
+</html>

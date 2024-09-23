@@ -1,0 +1,150 @@
+<html>
+
+<head>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-calendar.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-data-adapter.min.js"></script>
+  <link href="https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css" type="text/css" rel="stylesheet">
+  <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-data-adapter.min.js"></script>
+  <style type="text/css">
+    html,
+    body,
+    #container {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+  <script>
+    async function loadJSON2() {
+      try {
+        const response = await fetch('https://cdn.anychart.com/samples/calendar-chart/github-contributions/data.json');
+        const data2 = await response.json();
+        //show(data2)
+        // Process the loaded JSON data here
+        console.log(data2[0]);
+
+      } catch (error) {
+        console.error('Error loading JSON:', error);
+      }
+    }
+
+    // Call the function to load JSON
+    loadJSON2();
+
+
+    loadJSON();
+
+    async function loadJSON() {
+      try {
+        const response = await fetch('data.json');
+        const data = await response.json();
+        transformData(data)
+        return data;
+      } catch (error) {
+        console.error('Error loading JSON:', error);
+      }
+    }
+
+    function rectifyCount(count) {
+      if (count == 0) {
+        return '1';
+      }
+      return count;
+    }
+
+    function calculateLevel(count) {
+      if (count >= 1 && count < 5) {
+        return '2';
+      } else if (count >= 5 && count < 9) {
+        return '3';
+      } else if (count >= 9 && count < 20) {
+        return '4';
+      }
+    }
+
+    function transformData(data) {
+      const transformedData = data.data.user.contributionsCollection.contributionCalendar.weeks.flatMap(week =>
+        week.contributionDays
+          .filter(day => day.contributionCount !== 0 && day.date.includes("2023"))
+          .map(day => ({
+            count: day.contributionCount.toString(),
+            date: day.date,
+            level: calculateLevel(day.contributionCount)
+          }))
+      );
+
+      console.log(transformedData[8]);
+      show(transformedData)
+    }
+
+    function show(data) {
+      var dataset = anychart.data.set(data);
+      var mapping = dataset.mapAs({
+        x: 'date',
+        value: 'level'
+      });
+      var chart = anychart.calendar(mapping);
+
+      chart.background('#FF000022');
+
+      // chart.title().useHtml(true);
+      // chart.title("Calendar Chart: Basic Sample<br><br>" +
+      //   "<span style='font-size:12; font-style:italic'>" +
+      //   "GitHub Contributions</span>");
+
+      chart.years().title().fontSize(30);
+
+      chart.months()
+        .stroke(false)
+        .noDataStroke(false);
+
+      months = chart.months();
+      months.labels().fontColor("#000");
+      weeks = chart.weeks();
+      weeks.labels().fontColor("#000");
+      years = chart.years();
+      years.title().fontColor("#000");
+
+      chart.days()
+        .spacing(5)
+        .stroke(false)
+        .noDataStroke(false)
+        .noDataFill('#FFFFFF')
+        .noDataHatchFill(false);
+
+      chart.colorRange(false);
+
+      var customColorScale = anychart.scales.ordinalColor();
+      customColorScale.ranges([
+        { equal: 4, color: '#004333' },
+        { equal: 3, color: '#006D31' },
+        { equal: 2, color: '#37AB4B' },
+        { equal: 1, color: '#39D353' }
+      ]);
+
+      // Set color scale.
+      chart.colorScale(customColorScale);
+
+      chart.tooltip()
+        .format('{%count} contributions');
+
+      chart.listen('chartDraw', function () {
+        document.getElementById('container').style.height = chart.getActualHeight() + 'px';
+      });
+
+      chart.container('container');
+      chart.draw();
+    }
+
+  </script>
+</body>
+
+</html>
